@@ -138,6 +138,7 @@ class Graph:  # graful problemei
                     newline[j] = '.'
                     valid_move = True
                     if i > 0 and nodCurent.info[i-1][j] == '*':
+                        # TODO: vezi ca o sa am 2 bile ca eu nu modific si linia de sus cand bila cade pe newline
                         if i < lengthMatrix - 1 and nodCurent.info[i+1][j] != '.':
                             newline[j] = '*'
                         else:
@@ -168,6 +169,14 @@ class Graph:  # graful problemei
                             newline[j] = '*'
                         else:
                             valid_move = False
+                    if line[k - 2] == '.':
+                        newline[k - 2] = '*'
+                        if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] == '.':
+                            newline[j] = '*'
+                        else:
+                            valid_move = False
+                    else:
+                        valid_move = False
                     infoNodNou = copy.deepcopy(nodCurent.info)
                     infoNodNou[i] = newline[:]
                     if valid_move:
