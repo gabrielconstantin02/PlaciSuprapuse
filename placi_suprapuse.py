@@ -57,15 +57,9 @@ class NodParcurgere:
 
     def __str__(self):
         sir = ""
-        maxInalt = max([len(stiva) for stiva in self.info])
-        for inalt in range(maxInalt, 0, -1):
-            for stiva in self.info:
-                if len(stiva) < inalt:
-                    sir += "  "
-                else:
-                    sir += stiva[inalt - 1] + " "
-            sir += "\n"
-        sir += "-" * (2 * len(self.info) - 1)
+        line = ""
+        for list in self.info:
+            sir += (line.join(list) + '\n')
         return sir
 
     """
@@ -120,77 +114,239 @@ class Graph:  # graful problemei
         listaSuccesori = []
         lengthMatrix = len(nodCurent.info)
         for i in range(0, lengthMatrix):
-            if '*' not in nodCurent.info[i] and not(i > 1 and '*' not in nodCurent.info[i-1]):
-                continue
+            # Cred ca poti sa o stergi ca pare ca strica lucruri
+            #if '*' not in nodCurent.info[i] and not(i > 0 and '*' in nodCurent.info[i - 1]):
+                #continue
             length = len(nodCurent.info[i])
             line = nodCurent.info[i]
             j = 0
-            while j < length-1:
-                k = j
-                # cat timp nu am ajuns la capat si avem o placa
-                while j < length-1 and line[j] == line[j+1] and (line[j] != '.' or line[j] != '*'):
-                    j += 1
-                # daca la stanga avem spatiu
-                if k > 0 and line[k-1] == '.':
-                    newline = line[:]
-                    for ind in range(k-1, j):
-                        newline[ind] = newline[ind + 1]
-                    newline[j] = '.'
-                    valid_move = True
-                    if i > 0 and nodCurent.info[i-1][j] == '*':
-                        # TODO: vezi ca o sa am 2 bile ca eu nu modific si linia de sus cand bila cade pe newline
-                        if i < lengthMatrix - 1 and nodCurent.info[i+1][j] != '.':
-                            newline[j] = '*'
-                        else:
-                            valid_move = False
-                    infoNodNou = copy.deepcopy(nodCurent.info)
-                    infoNodNou[i] = newline[:]
-                    if valid_move:
-                        # print(infoNodNou)
-                        valid_move = verify_matrix(infoNodNou, length)
-                        # print(line)
-                        # print(newline, valid_move)
-                    if valid_move:
-                        if not nodCurent.contineInDrum(infoNodNou):
-                            costArc = 1
-                            listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+            while j < length - 1:
+                if line[j] != '.' and line[j] != '*':
+                    # k - capatul stang al placii
+                    # j - capatul drept al placii
+                    k = j
+                    # cat timp nu am ajuns la capat si avem o placa
+                    while j < length - 1 and line[j] == line[j + 1]:
+                        j += 1
+
+                    # daca la stanga avem spatiu
+                    if k > 0 and line[k - 1] == '.':
+                        infoNodNou = copy.deepcopy(nodCurent.info)
+                        newline = line[:]
+                        for ind in range(k - 1, j):
+                            newline[ind] = newline[ind + 1]
+                        newline[j] = '.'
+                        valid_move = True
+                        drop_ball = False
+                        # daca am eliberat spatiu sa cada o bila
+                        if i > 0 and nodCurent.info[i - 1][j] == '*':
+                            newline_up = nodCurent.info[i - 1][:]
+                            # daca nu cade mai mult de un nivel
+                            if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
+                                drop_ball = True
+                                newline[j] = '*'
+                                newline_up[j] = '.'
+                            # daca suntem pe ultimul nivel
+                            elif i == lengthMatrix - 1:
+                                drop_ball = True
+                                newline_up[j] = '.'
+                            else:
+                                valid_move = False
+                            infoNodNou[i - 1] = newline_up[:]
+                        infoNodNou[i] = newline[:]
+                        # daca matricea obtinuta e valida
+                        if valid_move:
                             # print(infoNodNou)
-                            # print_matrix(infoNodNou, g)
-                # TODO: Mai multe bile in sir
-                # daca la stanga avem bila
-                if k > 1 and line[k - 1] == '*':
-                    newline = line[:]
-                    for ind in range(k - 1, j):
-                        newline[ind] = newline[ind + 1]
-                    newline[j] = '.'
-                    valid_move = True
-                    if i > 0 and nodCurent.info[i - 1][j] == '*':
-                        if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
-                            newline[j] = '*'
+                            valid_move = verify_matrix(infoNodNou, length)
+                            # print(line)
+                            # print(newline, valid_move)
+                        if valid_move:
+                            # daca nu am mai ajuns la configuratia asta pana acum
+                            if not nodCurent.contineInDrum(infoNodNou):
+                                if drop_ball:
+                                    costArc = 1
+                                else:
+                                    costArc = 1 + (j - k + 1)
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                # print(infoNodNou)
+                                # print_matrix(infoNodNou, g)
+
+                    # daca la stanga avem cel putin o bila
+                    if k > 1 and line[k - 1] == '*':
+                        infoNodNou = copy.deepcopy(nodCurent.info)
+                        newline = line[:]
+                        for ind in range(k - 1, j):
+                            newline[ind] = newline[ind + 1]
+                        newline[j] = '.'
+                        valid_move = True
+                        drop_ball = False
+                        # daca am eliberat spatiu sa cada o bila
+                        if i > 0 and nodCurent.info[i - 1][j] == '*':
+                            newline_up = nodCurent.info[i - 1][:]
+                            # daca nu cade mai mult de un nivel
+                            if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
+                                newline[j] = '*'
+                                newline_up[j] = '.'
+                                drop_ball = True
+                            # daca suntem pe ultimul nivel
+                            elif i == lengthMatrix - 1:
+                                newline_up[j] = '.'
+                                drop_ball = True
+                            else:
+                                valid_move = False
+                            infoNodNou[i - 1] = newline_up[:]
+                        # indicele de start al secventei de bile
+                        kk = k - 1
+                        while kk > 0 and line[kk] == '*':
+                            kk -= 1
+                        # daca in stanga secventei de bile avem un spatiu (avem loc sa le impingem la stanga)
+                        if line[kk] == '.':
+                            if i < lengthMatrix - 1:
+                                newline_down = nodCurent.info[i + 1][:]
+                            for ind_bila in range(kk, k - 1):
+                                newline[ind_bila] = '*'
+                                # daca nu cade mai mult de un nivel
+                                if i < lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.' and nodCurent.info[i + 2][ind_bila] != '.':
+                                    newline_down[ind_bila] = '*'
+                                    newline[ind_bila] = '.'
+                                    drop_ball = True
+                                # daca sunt pe penultimul nivel si poate sa cada pe ultimul nivel
+                                elif i == lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.':
+                                    newline[ind_bila] = '.'
+                                    drop_ball = True
+                                else:
+                                    valid_move = False
+                            if i < lengthMatrix - 1:
+                                infoNodNou[i + 1] = newline_down[:]
                         else:
                             valid_move = False
-                    if line[k - 2] == '.':
-                        newline[k - 2] = '*'
-                        if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] == '.':
-                            newline[j] = '*'
-                        else:
-                            valid_move = False
-                    else:
-                        valid_move = False
-                    infoNodNou = copy.deepcopy(nodCurent.info)
-                    infoNodNou[i] = newline[:]
-                    if valid_move:
-                        # print(infoNodNou)
-                        valid_move = verify_matrix(infoNodNou, length)
-                        # print(line)
-                        # print(newline, valid_move)
-                    if valid_move:
-                        if not nodCurent.contineInDrum(infoNodNou):
-                            costArc = 1
-                            listaSuccesori.append(
-                                NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                        infoNodNou[i] = newline[:]
+                        if valid_move:
                             # print(infoNodNou)
-                            # print_matrix(infoNodNou, g)
+                            valid_move = verify_matrix(infoNodNou, length)
+                            # print(line)
+                            # print(newline, valid_move)
+                        if valid_move:
+                            if not nodCurent.contineInDrum(infoNodNou):
+                                if drop_ball:
+                                    costArc = 1
+                                else:
+                                    costArc = 2 * (1 + (j - k + 1))
+                                listaSuccesori.append(
+                                    NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                # print(infoNodNou)
+                                # print_matrix(infoNodNou, g)
+
+                    # daca la dreapta avem spatiu
+                    if j < length - 1 and line[j + 1] == '.':
+                        infoNodNou = copy.deepcopy(nodCurent.info)
+                        newline = line[:]
+                        for ind in range(j + 1, k, -1):
+                            newline[ind] = newline[ind - 1]
+                        newline[k] = '.'
+                        valid_move = True
+                        drop_ball = False
+                        # daca am eliberat spatiu sa cada o bila
+                        if i > 0 and nodCurent.info[i - 1][k] == '*':
+                            newline_up = nodCurent.info[i - 1][:]
+                            # daca nu cade mai mult de un nivel
+                            if i < lengthMatrix - 1 and nodCurent.info[i + 1][k] != '.':
+                                newline[k] = '*'
+                                newline_up[k] = '.'
+                                drop_ball = True
+                            # daca suntem pe ultimul nivel
+                            elif i == lengthMatrix - 1:
+                                newline_up[k] = '.'
+                                drop_ball = True
+                            else:
+                                valid_move = False
+                            infoNodNou[i - 1] = newline_up[:]
+                        infoNodNou[i] = newline[:]
+                        # daca matricea obtinuta e valida
+                        if valid_move:
+                            # print(infoNodNou)
+                            valid_move = verify_matrix(infoNodNou, length)
+                            # print(line)
+                            # print(newline, valid_move)
+                        if valid_move:
+                            # daca nu am mai ajuns la configuratia asta pana acum
+                            if not nodCurent.contineInDrum(infoNodNou):
+                                if drop_ball:
+                                    costArc = 1
+                                else:
+                                    costArc = 1 + (j - k + 1)
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                # print(infoNodNou)
+                                # print_matrix(infoNodNou, g)
+                    # daca la dreapta avem cel putin o bila
+                    if j < length - 2 and line[j + 1] == '*':
+                        infoNodNou = copy.deepcopy(nodCurent.info)
+                        newline = line[:]
+                        for ind in range(j + 1, k, -1):
+                            newline[ind] = newline[ind - 1]
+                        newline[k] = '.'
+                        valid_move = True
+                        drop_ball = False
+                        # daca am eliberat spatiu sa cada o bila
+                        if i > 0 and nodCurent.info[i - 1][k] == '*':
+                            newline_up = nodCurent.info[i - 1][:]
+                            # daca nu cade mai mult de un nivel
+                            if i < lengthMatrix - 1 and nodCurent.info[i + 1][k] != '.':
+                                newline[k] = '*'
+                                newline_up[k] = '.'
+                                drop_ball = True
+                            # daca suntem pe ultimul nivel
+                            elif i == lengthMatrix - 1:
+                                newline_up[k] = '.'
+                                drop_ball = True
+                            else:
+                                valid_move = False
+                            infoNodNou[i - 1] = newline_up[:]
+                        # indicele de start al secventei de bile
+                        jj = j + 1
+                        while jj < length - 1 and line[jj] == '*':
+                            jj += 1
+                        # daca in dreapta secventei de bile avem un spatiu (avem loc sa le impingem la dreapta)
+                        if line[jj] == '.':
+                            if i < lengthMatrix - 1:
+                                newline_down = nodCurent.info[i + 1][:]
+                            for ind_bila in range(j + 2, jj + 1):
+                                newline[ind_bila] = '*'
+                                # daca nu cade mai mult de un nivel
+                                if i < lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.' and \
+                                        nodCurent.info[i + 2][ind_bila] != '.':
+                                    newline_down[ind_bila] = '*'
+                                    newline[ind_bila] = '.'
+                                    drop_ball = True
+                                # daca sunt pe penultimul nivel si poate sa cada pe ultimul nivel
+                                elif i == lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.':
+                                    newline[ind_bila] = '.'
+                                    drop_ball = True
+                                else:
+                                    #print(newline)
+                                    #print(newline_down)
+                                    #print("\n")
+                                    valid_move = False
+                            if i < lengthMatrix - 1:
+                                infoNodNou[i + 1] = newline_down[:]
+                        else:
+                            valid_move = False
+                        infoNodNou[i] = newline[:]
+                        if valid_move:
+                            # print(infoNodNou)
+                            valid_move = verify_matrix(infoNodNou, length)
+                            # print(line)
+                            # print(newline, valid_move)
+                        if valid_move:
+                            if not nodCurent.contineInDrum(infoNodNou):
+                                if drop_ball:
+                                    costArc = 1
+                                else:
+                                    costArc = 2 * (1 + (j - k + 1))
+                                listaSuccesori.append(
+                                    NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                # print(infoNodNou)
+                                # print_matrix(infoNodNou, g)
                 j += 1
 
         '''
