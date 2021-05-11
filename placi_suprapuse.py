@@ -6,14 +6,6 @@ input_path = sys.argv[1]
 output_path = sys.argv[2]
 nsol = int(sys.argv[3])
 timeout = float(sys.argv[4])
-'''
-print(input_path)
-print(output_path)
-print(nsol)
-print(timeout)
-'''
-
-
 
 # informatii despre un nod din arborele de parcurgere (nu din graful initial)
 class NodParcurgere:
@@ -24,27 +16,33 @@ class NodParcurgere:
 
     def obtineDrum(self):
         l = [self]
+        l_g = []
         nod = self
         while nod.parinte is not None:
             l.insert(0, nod.parinte)
+            l_g.insert(0, nod.g - nod.parinte.g)
             nod = nod.parinte
-        return l
+        l_g.insert(0, 0)
+        return l, l_g
 
-    def afisDrum(self, afisCost=False, afisLung=False):  # returneaza si lungimea drumului
-        l = self.obtineDrum()
-        for nod in l:
-            print(str(nod))
-        if afisCost:
-            print("Cost: ", self.g)
-        if afisLung:
-            print("Lungime: ", len(l))
+    def afisDrum(self, file, nr_maxim):  # returneaza si lungimea drumului
+        l, l_g = self.obtineDrum()
+        for i in range(len(l)):
+            file.write(str(i+1)+")\n")
+            file.write(str(l[i]))
+            file.write("Cost ultima mutare: " + str(l_g[i]) + "\n\n")
+        file.write("Lungime: " + str(len(l)) + "\n")
+        file.write("Cost: " + str(self.g) + "\n")
+        # TODO: timp gasire solutie
+        file.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim) + "\n")
+        file.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
         return len(l)
 
-    def contineInDrum(self, infoNodNou):
+    def contineInDrum(self, infoNodNou, costNodNou):
         nodDrum = self
         while nodDrum is not None:
 
-            if infoNodNou == nodDrum.info:
+            if infoNodNou == nodDrum.info and costNodNou >= nodDrum.g:
                 return True
             nodDrum = nodDrum.parinte
 
@@ -61,15 +59,6 @@ class NodParcurgere:
         for list in self.info:
             sir += (line.join(list) + '\n')
         return sir
-
-    """
-    def __str__(self):
-        sir=""
-        for stiva in self.info:
-            sir+=(str(stiva))+"\n"
-        sir+="--------------\n"
-        return sir
-    """
 
 
 class Graph:  # graful problemei
@@ -101,6 +90,7 @@ class Graph:  # graful problemei
             m.append(list(line)[:n])
         f.close()
         self.start = m
+        self.nr_succesori = 0
 
     def testeaza_scop(self, nodCurent):
         for line in nodCurent.info:
@@ -115,8 +105,8 @@ class Graph:  # graful problemei
         lengthMatrix = len(nodCurent.info)
         for i in range(0, lengthMatrix):
             # Cred ca poti sa o stergi ca pare ca strica lucruri
-            #if '*' not in nodCurent.info[i] and not(i > 0 and '*' in nodCurent.info[i - 1]):
-                #continue
+            if '*' not in nodCurent.info[i] and not(i > 0 and '*' in nodCurent.info[i - 1]) and not(i < lengthMatrix - 1 and '*' in nodCurent.info[i + 1]):
+                continue
             length = len(nodCurent.info[i])
             line = nodCurent.info[i]
             j = 0
@@ -162,12 +152,13 @@ class Graph:  # graful problemei
                             # print(newline, valid_move)
                         if valid_move:
                             # daca nu am mai ajuns la configuratia asta pana acum
-                            if not nodCurent.contineInDrum(infoNodNou):
-                                if drop_ball:
-                                    costArc = 1
-                                else:
-                                    costArc = 1 + (j - k + 1)
+                            if drop_ball:
+                                costArc = 1
+                            else:
+                                costArc = 1 + (j - k + 1)
+                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
 
@@ -227,13 +218,14 @@ class Graph:  # graful problemei
                             # print(line)
                             # print(newline, valid_move)
                         if valid_move:
-                            if not nodCurent.contineInDrum(infoNodNou):
-                                if drop_ball:
-                                    costArc = 1
-                                else:
-                                    costArc = 2 * (1 + (j - k + 1))
-                                listaSuccesori.append(
-                                    NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+
+                            if drop_ball:
+                                costArc = 1
+                            else:
+                                costArc = 2 * (1 + (j - k + 1))
+                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
 
@@ -269,13 +261,14 @@ class Graph:  # graful problemei
                             # print(line)
                             # print(newline, valid_move)
                         if valid_move:
+                            if drop_ball:
+                                costArc = 1
+                            else:
+                                costArc = 1 + (j - k + 1)
                             # daca nu am mai ajuns la configuratia asta pana acum
-                            if not nodCurent.contineInDrum(infoNodNou):
-                                if drop_ball:
-                                    costArc = 1
-                                else:
-                                    costArc = 1 + (j - k + 1)
+                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
                     # daca la dreapta avem cel putin o bila
@@ -338,34 +331,16 @@ class Graph:  # graful problemei
                             # print(line)
                             # print(newline, valid_move)
                         if valid_move:
-                            if not nodCurent.contineInDrum(infoNodNou):
-                                if drop_ball:
-                                    costArc = 1
-                                else:
-                                    costArc = 2 * (1 + (j - k + 1))
-                                listaSuccesori.append(
-                                    NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                            if drop_ball:
+                                costArc = 1
+                            else:
+                                costArc = 2 * (1 + (j - k + 1))
+                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
                 j += 1
-
-        '''
-        rangeStive = range(len(nodCurent.info))
-        # nodCurent.info
-        for i in rangeStive:
-            if len(nodCurent.info[i]) == 0:
-                continue
-            copieStive = copy.deepcopy(nodCurent.info)
-            bloc = copieStive[i].pop()  # sterge si returneaza ultimul element din lista
-            for j in rangeStive:
-                if i == j:
-                    continue
-                infoNodNou = copy.deepcopy(copieStive)
-                infoNodNou[j].append(bloc)
-                if not nodCurent.contineInDrum(infoNodNou):
-                    costArc = 1
-                    listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
-        '''
         return listaSuccesori
 
     def __repr__(self):
@@ -377,17 +352,25 @@ class Graph:  # graful problemei
 
 def uniform_cost(gr, nrSolutiiCautate=1):
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
-    c = [NodParcurgere(gr.start, None, 0)]
-    print("Coada: " + str(c))
+    if verify_matrix(gr.start, len(gr.start[0])):
+        c = [NodParcurgere(gr.start, None, 0)]
+    else:
+        g.write("Input invalid\n")
+        return
+    # print("Coada: " + str(c))
+    nr_maxim_noduri = 1
+    nr_succesori = 0
     while len(c) > 0:
         # print("Coada actuala: " + str(c))
         # input()
+        if len(c) > nr_maxim_noduri:
+            nr_maxim_noduri = len(c)
         nodCurent = c.pop(0)
-
+        # print_matrix(nodCurent.info, g)
+        # print(verify_matrix(nodCurent.info, len(nodCurent.info)))
         if gr.testeaza_scop(nodCurent):
-            print("Solutie: ")
-            nodCurent.afisDrum(True, True)
-            print("\n----------------\n")
+            nodCurent.afisDrum(g, nr_maxim_noduri)
+            g.write("\n----------------\n")
             nrSolutiiCautate -= 1
             if nrSolutiiCautate == 0:
                 return
@@ -406,11 +389,9 @@ def uniform_cost(gr, nrSolutiiCautate=1):
                 c.append(s)
 
 
-
-
-
-
 def verify_matrix(matrix, length):
+    if length == 0:
+        return False
     for (poz, line) in enumerate(matrix):
         if length != len(line):
             # print(length, len(line))
@@ -438,42 +419,19 @@ def verify_matrix(matrix, length):
     return True
 
 
-# def verify_line(line1, line2, length): in caz ca am nevoie
-
-
 def print_matrix(matrix, file):
     line = ""
     for list in matrix:
         file.write(line.join(list) + '\n')
     file.write('\n')
 
-# creez fisiere de output pentru fiecare fisier de input din folder_input_2
 
-# verific daca nu există folderul folder_output, caz în care îl creez
 if not os.path.exists(output_path):
     os.mkdir(output_path)
 for numeFisier in os.listdir(input_path):
-    # pentru fiecare fisier de input cu numele fisier.txt (unde fisier e un nume generic, ca o variabila nu textul "fisier" in sine) fac un fisier de output, denumit output_fisier.txt
     numeFisierOutput = "output_" + numeFisier
-
-
-    '''
-    f=open(input_path + "/" + numeFisier)
-    line = f.readline()
-    n = int(len(line))-1
-    m = [list(line)[:n]]
-    for line in f.readlines():
-        m.append(list(line)[:n])
-    f.close()
-
-
-
-    print(verify_matrix(m, n))
-    '''
     print(numeFisier, "--->", numeFisierOutput)
-    # ca sa îmi creeze fișierul în folder_output, îl concatenez la numele fișierului având astfel o cale relativă la folderul în care se află programul main.py
     g = open(output_path + "/" + numeFisierOutput, "w")
-    # print_matrix(m, g)
     gr = Graph(input_path + "/" + numeFisier)
     uniform_cost(gr, nrSolutiiCautate=nsol)
     g.close()
