@@ -9,10 +9,12 @@ timeout = float(sys.argv[4])
 
 # informatii despre un nod din arborele de parcurgere (nu din graful initial)
 class NodParcurgere:
-    def __init__(self, info, parinte, cost=0):
+    def __init__(self, info, parinte, cost=0, h=0):
         self.info = info
         self.parinte = parinte  # parintele din arborele de parcurgere
-        self.g = cost  # consider cost=1 pentru o mutare
+        self.g = cost
+        self.h = h
+        self.f = self.g + self.h
 
     def obtineDrum(self):
         l = [self]
@@ -41,8 +43,7 @@ class NodParcurgere:
     def contineInDrum(self, infoNodNou, costNodNou):
         nodDrum = self
         while nodDrum is not None:
-
-            if infoNodNou == nodDrum.info and costNodNou >= nodDrum.g:
+            if infoNodNou == nodDrum.info:
                 return True
             nodDrum = nodDrum.parinte
 
@@ -100,7 +101,7 @@ class Graph:  # graful problemei
 
     # va genera succesorii sub forma de noduri in arborele de parcurgere
 
-    def genereazaSuccesori(self, nodCurent):
+    def genereazaSuccesori(self, nodCurent, tip_euristica="euristica banala"):
         listaSuccesori = []
         lengthMatrix = len(nodCurent.info)
         for i in range(0, lengthMatrix):
@@ -157,7 +158,7 @@ class Graph:  # graful problemei
                             else:
                                 costArc = 1 + (j - k + 1)
                             if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
-                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
@@ -224,7 +225,7 @@ class Graph:  # graful problemei
                             else:
                                 costArc = 2 * (1 + (j - k + 1))
                             if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
-                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
@@ -267,7 +268,7 @@ class Graph:  # graful problemei
                                 costArc = 1 + (j - k + 1)
                             # daca nu am mai ajuns la configuratia asta pana acum
                             if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
-                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
@@ -336,13 +337,72 @@ class Graph:  # graful problemei
                             else:
                                 costArc = 2 * (1 + (j - k + 1))
                             if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
-                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc))
+                                listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
                                 # print_matrix(infoNodNou, g)
                 j += 1
         return listaSuccesori
 
+    def calculeaza_h(self, infoNod, tip_euristica="euristica banala"):
+        if tip_euristica == "euristica banala":
+            for line in infoNod:
+                if '*' in line:
+                    return 1  # minimul dintre costurile tuturor arcelor
+            return 0
+        '''
+        elif tip_euristica == "euristica admisibila 1":
+            # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
+            euristici = []
+            for (iScop, scop) in enumerate(self.scopuri):  # scop e o stare scop
+                h = 0
+                for iStiva, stiva in enumerate(infoNod):
+                    for iElem, elem in enumerate(stiva):
+                        try:
+                            # exista în stiva scop indicele iElem dar pe acea pozitie nu se afla blocul din infoNod
+                            if elem != scop[iStiva][iElem]:
+                                h += 1 + ord(elem) - ord("a")
+                        except IndexError:
+                            # nici macar nu exista pozitia iElem in stiva cu indicele iStiva din scop
+                            h += 1 + ord(elem) - ord("a")
+                euristici.append(h)
+            return min(euristici)
+        elif tip_euristica == "euristica admisibila 2":
+            # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
+            euristici = []
+            for (iScop, scop) in enumerate(self.scopuri):  # scop e o stare scop
+                h = 0
+                for iStiva, stiva in enumerate(infoNod):
+                    for iElem, elem in enumerate(stiva):
+                        try:
+                            # exista în stiva scop indicele iElem dar pe acea pozitie nu se afla blocul din infoNod
+                            if elem != scop[iStiva][iElem]:
+                                h += 1
+                            else:
+                                if stiva[:iElem] != scop[iStiva][:iElem]:
+                                    h += 2
+                        except IndexError:
+                            # nici macar nu exista pozitia iElem in stiva cu indicele iStiva din scop
+                            h += 1
+                euristici.append(h)
+            return min(euristici)
+        elif tip_euristica == "euristica neadmisibila":
+            # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
+            euristici = []
+            for (iScop, scop) in enumerate(self.scopuri):  # scop e o stare scop
+                h = 0
+                for iStiva, stiva in enumerate(infoNod):
+                    for iElem, elem in enumerate(stiva):
+                        try:
+                            # exista în stiva scop indicele iElem dar pe acea pozitie nu se afla blocul din infoNod
+                            if elem != scop[iStiva][iElem]:
+                                h += 1
+                        except IndexError:
+                            # nici macar nu exista pozitia iElem in stiva cu indicele iStiva din scop
+                            h += 2
+                euristici.append(h)
+            return min(euristici)
+        '''
     def __repr__(self):
         sir = ""
         for (k, v) in self.__dict__.items():
@@ -383,6 +443,45 @@ def uniform_cost(gr, nrSolutiiCautate=1):
                 if c[i].g > s.g:
                     gasit_loc = True
                     break
+            if gasit_loc:
+                c.insert(i, s)
+            else:
+                c.append(s)
+
+
+def a_star(gr, nrSolutiiCautate, tip_euristica):
+    # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
+    if verify_matrix(gr.start, len(gr.start[0])):
+        c = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start))]
+    else:
+        g.write("Input invalid\n")
+        return
+    # print("Coada: " + str(c))
+    nr_maxim_noduri = 1
+    nr_succesori = 0
+    while len(c) > 0:
+        # print("Coada actuala: " + str(c))
+        # input()
+        if len(c) > nr_maxim_noduri:
+            nr_maxim_noduri = len(c)
+        nodCurent = c.pop(0)
+        # print_matrix(nodCurent.info, g)
+        # print(verify_matrix(nodCurent.info, len(nodCurent.info)))
+        if gr.testeaza_scop(nodCurent):
+            nodCurent.afisDrum(g, nr_maxim_noduri)
+            g.write("\n----------------\n")
+            nrSolutiiCautate -= 1
+            if nrSolutiiCautate == 0:
+                return
+        lSuccesori = gr.genereazaSuccesori(nodCurent, tip_euristica=tip_euristica)
+        for s in lSuccesori:
+            i = 0
+            gasit_loc = False
+            for i in range(len(c)):
+                # diferenta fata de UCS e ca ordonez dupa f
+                if c[i].f >= s.f:
+                    gasit_loc = True
+                    break;
             if gasit_loc:
                 c.insert(i, s)
             else:
@@ -433,7 +532,8 @@ for numeFisier in os.listdir(input_path):
     print(numeFisier, "--->", numeFisierOutput)
     g = open(output_path + "/" + numeFisierOutput, "w")
     gr = Graph(input_path + "/" + numeFisier)
-    uniform_cost(gr, nrSolutiiCautate=nsol)
+    #uniform_cost(gr, nrSolutiiCautate=nsol)
+    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     g.close()
 
 
