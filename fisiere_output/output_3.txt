@@ -2,71 +2,103 @@
 aa*bb.cc
 .ddd..e*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 0
 
 2)
 aa*bb.cc
 .ddd.e.*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 2
 
 3)
 aa*.bbcc
 .ddd.e.*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 3
 
 4)
 aa*.bbcc
 ddd..e.*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 4
 
 5)
 .aa.bbcc
 ddd*.e.*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 1
 
 6)
 .aabb.cc
 ddd*.e.*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 3
 
 7)
 .aabb.cc
 ddd*..e*
 ..ffffgg
+..jjii.k
 Cost ultima mutare: 2
 
 8)
 .aabb.cc
 ddd*..e*
 .ffff.gg
+..jjii.k
 Cost ultima mutare: 5
 
 9)
 .aabb.cc
-ddd*..e.
-.ffffgg.
-Cost ultima mutare: 1
+ddd*..e*
+ffff..gg
+..jjii.k
+Cost ultima mutare: 5
 
 10)
 .aabb.cc
-ddd*..e.
-ffff.gg.
-Cost ultima mutare: 5
+.ddd..e*
+ffff*.gg
+..jjii.k
+Cost ultima mutare: 1
 
 11)
 .aabb.cc
 .ddd..e.
-ffff.gg.
+ffff*gg*
+..jjii.k
 Cost ultima mutare: 1
 
-Lungime: 11
-Cost: 27
-Numar maxim de noduri existente la un moment dat in memorie: 54
-Numar total de noduri calculate: 357
+12)
+.aabb.cc
+.ddd..e.
+ffff*gg.
+..jjiik.
+Cost ultima mutare: 1
+
+13)
+.aabb.cc
+.ddd..e.
+ffff*gg.
+..jjii.k
+Cost ultima mutare: 2
+
+14)
+.aabb.cc
+.ddd..e.
+ffff.gg.
+..jj.iik
+Cost ultima mutare: 1
+
+Lungime: 14
+Cost: 31
+Numar maxim de noduri existente la un moment dat in memorie: 25319
+Numar total de noduri calculate: 110223
 
 ----------------

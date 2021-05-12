@@ -106,12 +106,12 @@ class Graph:  # graful problemei
         lengthMatrix = len(nodCurent.info)
         for i in range(0, lengthMatrix):
             # Cred ca poti sa o stergi ca pare ca strica lucruri
-            if '*' not in nodCurent.info[i] and not(i > 0 and '*' in nodCurent.info[i - 1]) and not(i < lengthMatrix - 1 and '*' in nodCurent.info[i + 1]):
-                continue
+            #if '*' not in nodCurent.info[i] and not(i > 0 and '*' in nodCurent.info[i - 1]) and not(i < lengthMatrix - 1 and '*' in nodCurent.info[i + 1]):
+                #continue
             length = len(nodCurent.info[i])
             line = nodCurent.info[i]
             j = 0
-            while j < length - 1:
+            while j < length:
                 if line[j] != '.' and line[j] != '*':
                     # k - capatul stang al placii
                     # j - capatul drept al placii
@@ -397,7 +397,6 @@ def uniform_cost(gr, nrSolutiiCautate=1):
         return
     # print("Coada: " + str(c))
     nr_maxim_noduri = 1
-    nr_succesori = 0
     while len(c) > 0:
         # print("Coada actuala: " + str(c))
         # input()
@@ -436,7 +435,6 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
         return
     # print("Coada: " + str(c))
     nr_maxim_noduri = 1
-    nr_succesori = 0
     while len(c) > 0:
         # print("Coada actuala: " + str(c))
         # input()
@@ -464,6 +462,63 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
                 c.insert(i, s)
             else:
                 c.append(s)
+
+
+def a_star_optimizat(gr, tip_euristica):
+    # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
+    if verify_matrix(gr.start, len(gr.start[0])):
+        l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start))]
+    else:
+        g.write("Input invalid\n")
+        return
+    # print("Coada: " + str(c))
+    nr_maxim_noduri = 1
+
+    # l_open contine nodurile candidate pentru expandare
+
+    # l_closed contine nodurile expandate
+    l_closed = []
+    while len(l_open) > 0:
+        if len(l_open) > nr_maxim_noduri:
+            nr_maxim_noduri = len(l_open)
+        nodCurent = l_open.pop(0)
+        l_closed.append(nodCurent)
+        if gr.testeaza_scop(nodCurent):
+            nodCurent.afisDrum(g, nr_maxim_noduri)
+            g.write("\n----------------\n")
+            return
+        lSuccesori = gr.genereazaSuccesori(nodCurent, tip_euristica=tip_euristica)
+        for s in lSuccesori:
+            gasitC = False
+            for nodC in l_open:
+                if s.info == nodC.info:
+                    gasitC = True
+                    if s.f >= nodC.f:
+                        lSuccesori.remove(s)
+                    else:  # s.f<nodC.f
+                        l_open.remove(nodC)
+                    break
+            if not gasitC:
+                for nodC in l_closed:
+                    if s.info == nodC.info:
+                        if s.f >= nodC.f:
+                            lSuccesori.remove(s)
+                        else:  # s.f<nodC.f
+                            l_closed.remove(nodC)
+                        break
+        for s in lSuccesori:
+            i = 0
+            gasit_loc = False
+            for i in range(len(l_open)):
+                # diferenta fata de UCS e ca ordonez crescator dupa f
+                # daca f-urile sunt egale ordonez descrescator dupa g
+                if l_open[i].f > s.f or (l_open[i].f == s.f and l_open[i].g <= s.g):
+                    gasit_loc = True
+                    break
+            if gasit_loc:
+                l_open.insert(i, s)
+            else:
+                l_open.append(s)
 
 
 def verify_matrix(matrix, length):
@@ -511,10 +566,16 @@ for numeFisier in os.listdir(input_path):
     g = open(output_path + "/" + numeFisierOutput, "w")
     gr = Graph(input_path + "/" + numeFisier)
     #uniform_cost(gr, nrSolutiiCautate=nsol)
+
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+
+    #a_star_optimizat(gr, tip_euristica="euristica banala")
+    a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
+    #a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
+    #a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
     g.close()
 
 
