@@ -350,23 +350,15 @@ class Graph:  # graful problemei
                 if '*' in line:
                     return 1  # minimul dintre costurile tuturor arcelor
             return 0
-        '''
         elif tip_euristica == "euristica admisibila 1":
-            # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
-            euristici = []
-            for (iScop, scop) in enumerate(self.scopuri):  # scop e o stare scop
-                h = 0
-                for iStiva, stiva in enumerate(infoNod):
-                    for iElem, elem in enumerate(stiva):
-                        try:
-                            # exista în stiva scop indicele iElem dar pe acea pozitie nu se afla blocul din infoNod
-                            if elem != scop[iStiva][iElem]:
-                                h += 1 + ord(elem) - ord("a")
-                        except IndexError:
-                            # nici macar nu exista pozitia iElem in stiva cu indicele iStiva din scop
-                            h += 1 + ord(elem) - ord("a")
-                euristici.append(h)
-            return min(euristici)
+            # calculez cate bile mai am in matrice
+            nr_bile = 0
+            for line in infoNod:
+                for x in line:
+                    if '*' == x:
+                        nr_bile += 1
+            return nr_bile
+        '''
         elif tip_euristica == "euristica admisibila 2":
             # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
             euristici = []
@@ -481,7 +473,7 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
                 # diferenta fata de UCS e ca ordonez dupa f
                 if c[i].f >= s.f:
                     gasit_loc = True
-                    break;
+                    break
             if gasit_loc:
                 c.insert(i, s)
             else:
@@ -533,7 +525,8 @@ for numeFisier in os.listdir(input_path):
     g = open(output_path + "/" + numeFisierOutput, "w")
     gr = Graph(input_path + "/" + numeFisier)
     #uniform_cost(gr, nrSolutiiCautate=nsol)
-    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
+    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
+    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
     g.close()
 
 
