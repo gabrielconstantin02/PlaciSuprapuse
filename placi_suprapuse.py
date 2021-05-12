@@ -366,27 +366,21 @@ class Graph:  # graful problemei
             for i in range(len(infoNod)):
                 for x in infoNod[i]:
                     if '*' == x:
-                        steps += len(infoNod) - i
+                        steps += len(infoNod) - 1 - i
                         diff += 1
             return steps - diff if diff > 1 else steps
-        '''
         elif tip_euristica == "euristica neadmisibila":
-            # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
-            euristici = []
-            for (iScop, scop) in enumerate(self.scopuri):  # scop e o stare scop
-                h = 0
-                for iStiva, stiva in enumerate(infoNod):
-                    for iElem, elem in enumerate(stiva):
-                        try:
-                            # exista în stiva scop indicele iElem dar pe acea pozitie nu se afla blocul din infoNod
-                            if elem != scop[iStiva][iElem]:
-                                h += 1
-                        except IndexError:
-                            # nici macar nu exista pozitia iElem in stiva cu indicele iStiva din scop
-                            h += 2
-                euristici.append(h)
-            return min(euristici)
-        '''
+            # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala
+            # si ca sa ajunga in starea scop trebuie sa mut o astfel de piesa pe fiecare linie a matricei de la bila in jos + o mutare de cost 1 ca sa cada un nivel
+            # TODO: exista cumva contraexemplu? (poate pe matricile mici? (ca nr de linii/coloane), sau si pe altele?)
+            # TODO: eventual cauta una mai buna ca merge doar pe output_2 cu 10 nsol
+            cost = 0
+            for i in range(len(infoNod)):
+                for x in infoNod[i]:
+                    if '*' == x:
+                        cost += 2 * (1 + (len(infoNod[i]) - 2)) * (len(infoNod) - 1 - i) + len(infoNod) - 1 - i
+            return cost
+
     def __repr__(self):
         sir = ""
         for (k, v) in self.__dict__.items():
@@ -519,7 +513,8 @@ for numeFisier in os.listdir(input_path):
     #uniform_cost(gr, nrSolutiiCautate=nsol)
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
