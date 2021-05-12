@@ -352,32 +352,24 @@ class Graph:  # graful problemei
             return 0
         elif tip_euristica == "euristica admisibila 1":
             # calculez cate bile mai am in matrice
-            nr_bile = 0
+            nr_balls = 0
             for line in infoNod:
                 for x in line:
                     if '*' == x:
-                        nr_bile += 1
-            return nr_bile
-        '''
+                        nr_balls += 1
+            return nr_balls
         elif tip_euristica == "euristica admisibila 2":
-            # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
-            euristici = []
-            for (iScop, scop) in enumerate(self.scopuri):  # scop e o stare scop
-                h = 0
-                for iStiva, stiva in enumerate(infoNod):
-                    for iElem, elem in enumerate(stiva):
-                        try:
-                            # exista în stiva scop indicele iElem dar pe acea pozitie nu se afla blocul din infoNod
-                            if elem != scop[iStiva][iElem]:
-                                h += 1
-                            else:
-                                if stiva[:iElem] != scop[iStiva][:iElem]:
-                                    h += 2
-                        except IndexError:
-                            # nici macar nu exista pozitia iElem in stiva cu indicele iStiva din scop
-                            h += 1
-                euristici.append(h)
-            return min(euristici)
+            # calculez cate bile mai am in matrice si cate linii mai am pana dispar(ajung pe ultima linie)
+            # exista si mutari care pot sa coboare 2 bile in acelasi timp, asa ca de fiecare data cand calculam inaltimea unei bile, scadem 1
+            steps = 0
+            diff = 0
+            for i in range(len(infoNod)):
+                for x in infoNod[i]:
+                    if '*' == x:
+                        steps += len(infoNod) - i
+                        diff += 1
+            return steps - diff if diff > 1 else steps
+        '''
         elif tip_euristica == "euristica neadmisibila":
             # calculez cate blocuri nu sunt la locul fata de fiecare dintre starile scop, si apoi iau minimul dintre aceste valori
             euristici = []
@@ -526,7 +518,8 @@ for numeFisier in os.listdir(input_path):
     gr = Graph(input_path + "/" + numeFisier)
     #uniform_cost(gr, nrSolutiiCautate=nsol)
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
-    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
+    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
+    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     g.close()
 
 
