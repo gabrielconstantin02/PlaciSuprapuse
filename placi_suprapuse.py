@@ -362,11 +362,28 @@ class Graph:  # graful problemei
             # exista si mutari care pot sa coboare 2 bile in acelasi timp, asa ca de fiecare data cand calculam inaltimea unei bile, scadem 1
             steps = 0
             diff = 0
-            for i in range(len(infoNod)):
-                for x in infoNod[i]:
-                    if '*' == x and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
+            lin = len(infoNod)
+            col = len(infoNod[0])
+            for i in range(lin):
+                for j in range(col):
+                    # e bila si sub ia nu sunt alte bile suprapuse
+                    if '*' == infoNod[i][j] and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
                         steps += len(infoNod) - 1 - i
                         diff += 1
+                        if diff > 1:
+                            st = j - 1
+                            dr = j + 1
+                            ok = True
+                            while st > 0 and infoNod[i][st - 1] == infoNod[i][st]:
+                                st -= 1
+                            if i > 0 and st > 0 and infoNod[i - 1][st] == '*':
+                                ok = False
+                            while dr < col - 1 and infoNod[i][dr + 1] == infoNod[i][dr]:
+                                dr += 1
+                            if i > 0 and dr < col and infoNod[i - 1][dr] == '*':
+                                ok = False
+                            if ok:
+                                diff -= 1
             return steps - diff + 1 if diff > 1 else steps
         elif tip_euristica == "euristica neadmisibila":
             # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala

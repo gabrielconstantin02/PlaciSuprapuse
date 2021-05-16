@@ -64,16 +64,16 @@ Cost ultima mutare: 1
 10)
 .aabb.cc
 ddd*..e.
-ffff.gg*
-..jjii.k
-Cost ultima mutare: 5
+.ffffgg.
+..jjiik.
+Cost ultima mutare: 1
 
 11)
 .aabb.cc
-.ddd..e.
-ffff*gg*
-..jjii.k
-Cost ultima mutare: 1
+ddd*..e.
+ffff.gg.
+..jjiik.
+Cost ultima mutare: 5
 
 12)
 .aabb.cc
@@ -98,7 +98,7 @@ Cost ultima mutare: 1
 
 Lungime: 14
 Cost: 31
-Numar maxim de noduri existente la un moment dat in memorie: 30709
-Numar total de noduri calculate: 117187
+Numar maxim de noduri existente la un moment dat in memorie: 23879
+Numar total de noduri calculate: 91366
 
 ----------------
