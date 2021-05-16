@@ -64,25 +64,6 @@ class NodParcurgere:
 
 class Graph:  # graful problemei
     def __init__(self, nume_fisier):
-        '''
-        def obtineStive(sir):
-            stiveSiruri = sir.strip().split("\n")
-            listaStive = [sirStiva.strip().split() if sirStiva != "#" else [] for sirStiva in stiveSiruri]
-            return listaStive
-
-        f = open(nume_fisier, 'r')
-
-        continutFisier = f.read()
-        siruriStari = continutFisier.split("stari_finale")
-        self.start = obtineStive(siruriStari[0])  # stare initiala
-        self.scopuri = []
-        siruriStariFinale = siruriStari[1].strip().split("---")
-        for scop in siruriStariFinale:
-            self.scopuri.append(obtineStive(scop))
-        print("Stare Initiala:", self.start)
-        print("Stari finale posibile:", self.scopuri)
-        input()
-        '''
         f = open(nume_fisier)
         line = f.readline()
         n = int(len(line)) - 1
@@ -131,19 +112,23 @@ class Graph:  # graful problemei
                         drop_ball = False
                         # daca am eliberat spatiu sa cada o bila
                         if i > 0 and nodCurent.info[i - 1][j] == '*':
-                            newline_up = nodCurent.info[i - 1][:]
+                            q = i - 2
+                            while q >= 0 and nodCurent.info[q][j] == '*':
+                                q -= 1
+                            # newline_up = nodCurent.info[i - 1][:]
                             # daca nu cade mai mult de un nivel
                             if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
                                 drop_ball = True
                                 newline[j] = '*'
-                                newline_up[j] = '.'
+                                # newline_up[j] = '.'
+                                infoNodNou[q + 1][j] = '.'
                             # daca suntem pe ultimul nivel
                             elif i == lengthMatrix - 1:
                                 drop_ball = True
-                                newline_up[j] = '.'
+                                for qq in range(i - 1, q, -1):
+                                    infoNodNou[qq][j] = '.'
                             else:
                                 valid_move = False
-                            infoNodNou[i - 1] = newline_up[:]
                         infoNodNou[i] = newline[:]
                         # daca matricea obtinuta e valida
                         if valid_move:
@@ -174,19 +159,23 @@ class Graph:  # graful problemei
                         drop_ball = False
                         # daca am eliberat spatiu sa cada o bila
                         if i > 0 and nodCurent.info[i - 1][j] == '*':
-                            newline_up = nodCurent.info[i - 1][:]
+                            q = i - 2
+                            while q >= 0 and nodCurent.info[q][j] == '*':
+                                q -= 1
+                            # newline_up = nodCurent.info[i - 1][:]
                             # daca nu cade mai mult de un nivel
                             if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
-                                newline[j] = '*'
-                                newline_up[j] = '.'
                                 drop_ball = True
+                                newline[j] = '*'
+                                # newline_up[j] = '.'
+                                infoNodNou[q + 1][j] = '.'
                             # daca suntem pe ultimul nivel
                             elif i == lengthMatrix - 1:
-                                newline_up[j] = '.'
                                 drop_ball = True
+                                for qq in range(i - 1, q, -1):
+                                    infoNodNou[qq][j] = '.'
                             else:
                                 valid_move = False
-                            infoNodNou[i - 1] = newline_up[:]
                         # indicele de start al secventei de bile
                         kk = k - 1
                         while kk > 0 and line[kk] == '*':
@@ -241,19 +230,21 @@ class Graph:  # graful problemei
                         drop_ball = False
                         # daca am eliberat spatiu sa cada o bila
                         if i > 0 and nodCurent.info[i - 1][k] == '*':
-                            newline_up = nodCurent.info[i - 1][:]
+                            q = i - 2
+                            while q >= 0 and nodCurent.info[q][k] == '*':
+                                q -= 1
                             # daca nu cade mai mult de un nivel
                             if i < lengthMatrix - 1 and nodCurent.info[i + 1][k] != '.':
                                 newline[k] = '*'
-                                newline_up[k] = '.'
+                                infoNodNou[q + 1][k] = '.'
                                 drop_ball = True
                             # daca suntem pe ultimul nivel
                             elif i == lengthMatrix - 1:
-                                newline_up[k] = '.'
+                                for qq in range(i - 1, q, -1):
+                                    infoNodNou[qq][k] = '.'
                                 drop_ball = True
                             else:
                                 valid_move = False
-                            infoNodNou[i - 1] = newline_up[:]
                         infoNodNou[i] = newline[:]
                         # daca matricea obtinuta e valida
                         if valid_move:
@@ -283,19 +274,21 @@ class Graph:  # graful problemei
                         drop_ball = False
                         # daca am eliberat spatiu sa cada o bila
                         if i > 0 and nodCurent.info[i - 1][k] == '*':
-                            newline_up = nodCurent.info[i - 1][:]
+                            q = i - 2
+                            while q >= 0 and nodCurent.info[q][k] == '*':
+                                q -= 1
                             # daca nu cade mai mult de un nivel
                             if i < lengthMatrix - 1 and nodCurent.info[i + 1][k] != '.':
                                 newline[k] = '*'
-                                newline_up[k] = '.'
+                                infoNodNou[q + 1][k] = '.'
                                 drop_ball = True
                             # daca suntem pe ultimul nivel
                             elif i == lengthMatrix - 1:
-                                newline_up[k] = '.'
+                                for qq in range(i - 1, q, -1):
+                                    infoNodNou[qq][k] = '.'
                                 drop_ball = True
                             else:
                                 valid_move = False
-                            infoNodNou[i - 1] = newline_up[:]
                         # indicele de start al secventei de bile
                         jj = j + 1
                         while jj < length - 1 and line[jj] == '*':
@@ -416,7 +409,6 @@ def uniform_cost(gr, nrSolutiiCautate=1):
             i = 0
             gasit_loc = False
             for i in range(len(c)):
-                # ordonez dupa cost(notat cu g aici și în desenele de pe site)
                 if c[i].g > s.g:
                     gasit_loc = True
                     break
@@ -454,7 +446,6 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
             i = 0
             gasit_loc = False
             for i in range(len(c)):
-                # diferenta fata de UCS e ca ordonez dupa f
                 if c[i].f >= s.f:
                     gasit_loc = True
                     break
@@ -467,14 +458,13 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
 def a_star_optimizat(gr, tip_euristica):
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
     if verify_matrix(gr.start, len(gr.start[0])):
+        # l_open contine nodurile candidate pentru expandare
         l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start))]
     else:
         g.write("Input invalid\n")
         return
     # print("Coada: " + str(c))
     nr_maxim_noduri = 1
-
-    # l_open contine nodurile candidate pentru expandare
 
     # l_closed contine nodurile expandate
     l_closed = []
@@ -510,7 +500,6 @@ def a_star_optimizat(gr, tip_euristica):
             i = 0
             gasit_loc = False
             for i in range(len(l_open)):
-                # diferenta fata de UCS e ca ordonez crescator dupa f
                 # daca f-urile sunt egale ordonez descrescator dupa g
                 if l_open[i].f > s.f or (l_open[i].f == s.f and l_open[i].g <= s.g):
                     gasit_loc = True
