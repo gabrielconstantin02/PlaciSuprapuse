@@ -19,19 +19,23 @@ class NodParcurgere:
     def obtineDrum(self):
         l = [self]
         l_g = []
+        l_h = []
         nod = self
         while nod.parinte is not None:
             l.insert(0, nod.parinte)
             l_g.insert(0, nod.g - nod.parinte.g)
+            l_h.insert(0, nod.h)
             nod = nod.parinte
         l_g.insert(0, 0)
-        return l, l_g
+        l_h.insert(0, nod.h)
+        return l, l_g, l_h
 
     def afisDrum(self, file, nr_maxim):  # returneaza si lungimea drumului
-        l, l_g = self.obtineDrum()
+        l, l_g, l_h = self.obtineDrum()
         for i in range(len(l)):
             file.write(str(i+1)+")\n")
             file.write(str(l[i]))
+            file.write("Cost ESTIMAT ultima mutare: " + str(l_h[i]) + "\n")
             file.write("Cost ultima mutare: " + str(l_g[i]) + "\n\n")
         file.write("Lungime: " + str(len(l)) + "\n")
         file.write("Cost: " + str(self.g) + "\n")
@@ -370,16 +374,60 @@ class Graph:  # graful problemei
                     if '*' == infoNod[i][j] and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
                         steps += len(infoNod) - 1 - i
                         diff += 1
+                        if i < col - 1:
+
+                            st = j - 1
+                            dr = j + 1
+                            # presupunem ca exista spatiu sa mutam una din placile invecinate cu bila noastra
+                            ok = True
+                            while st > 0 and infoNod[i + 1][st - 1] == infoNod[i][st]:
+                                st -= 1
+                            if i > 0 and st > 0 and infoNod[i + 1][st - 1] == '.':
+                                ok = False
+                            while dr < col - 1 and infoNod[i + 1][dr + 1] == infoNod[i][dr]:
+                                dr += 1
+                            if i > 0 and dr < col - 1 and infoNod[i + 1][dr + 1] == '.':
+                                ok = False
+                            # daca placile nu pot fi mutate in laterala si avem o placa cu lungime pana la capete mai mare decat 1 in ambele directii de la bila
+                            if not ok and (j - 1 < 0 or infoNod[i + 1][j - 1] == infoNod[i + 1][j]) and (j + 1 >= col or infoNod[i + 1][j + 1] == infoNod[i + 1][j]):
+                                steps += 1
+                                '''
+                            st = j
+                            dr = j
+                            # presupunem ca nu exista spatiu sa mutam una din placile de jos invecinate cu bila noastra
+                            ok1 = False
+                            cost_min = 1
+                            while st > 0 and infoNod[i + 1][st - 1] == infoNod[i + 1][st]:
+                                st -= 1
+                            if i > 0 and st > 0 and infoNod[i + 1][st - 1] == '.':
+                                ok1 = True
+                            while dr < col - 1 and infoNod[i + 1][dr + 1] == infoNod[i + 1][dr]:
+                                dr += 1
+                            if i > 0 and dr < col - 1 and infoNod[i + 1][dr + 1] == '.':
+                                ok1 = True
+
+                            # presupunem ca nu exista spatiu sa mutam una din placile invecinate cu bila noastra
+                            ok2 = False
+                            while st > 0 and infoNod[i][st - 1] == infoNod[i][st]:
+                                st -= 1
+                            if i > 0 and st > 0 and infoNod[i][st - 1] == '.':
+                                ok2 = True
+                                cost_min = j - st + 2
+                            while dr < col - 1 and infoNod[i][dr + 1] == infoNod[i][dr]:
+                                dr += 1
+                            if i > 0 and dr < col - 1 and infoNod[i][dr + 1] == '.':
+                                ok2 = True
+                                cost_min = min(j - st + 2, cost_min)
+                            # daca placile nu pot fi mutate in laterala si avem o placa cu lungime pana la capete mai mare decat 1 in ambele directii de la bila
+                            if not ok1 and ok2 and (j - 1 < 0 or infoNod[i + 1][j - 1] != '.') and (j + 1 >= col or infoNod[i + 1][j + 1] != '.'):
+                                steps += cost_min - 1
+                                '''
                         if diff > 1:
                             st = j - 1
                             dr = j + 1
                             ok = True
-                            while st > 0 and infoNod[i][st - 1] == infoNod[i][st]:
-                                st -= 1
-                            if i > 0 and st > 0 and infoNod[i - 1][st] == '*':
+                            if i > 0 and st >= 0 and infoNod[i - 1][st] == '*':
                                 ok = False
-                            while dr < col - 1 and infoNod[i][dr + 1] == infoNod[i][dr]:
-                                dr += 1
                             if i > 0 and dr < col and infoNod[i - 1][dr] == '*':
                                 ok = False
                             if ok:

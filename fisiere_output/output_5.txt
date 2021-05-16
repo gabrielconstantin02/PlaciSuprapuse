@@ -4,6 +4,7 @@ bb....
 cc....
 .d*...
 eeee..
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 0
 
 2)
@@ -12,6 +13,7 @@ bb....
 .cc...
 .d*...
 eeee..
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 3
 
 3)
@@ -20,6 +22,7 @@ bb....
 .cc...
 ..d*..
 eeee..
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 4
 
 4)
@@ -28,6 +31,7 @@ aa....
 .cc...
 ..d*..
 eeee..
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 3
 
 5)
@@ -36,6 +40,7 @@ aa....
 ..cc..
 ..d*..
 eeee..
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 3
 
 6)
@@ -44,11 +49,12 @@ aa....
 ..cc..
 ...d..
 eeee..
+Cost ESTIMAT ultima mutare: 0
 Cost ultima mutare: 1
 
 Lungime: 6
 Cost: 14
-Numar maxim de noduri existente la un moment dat in memorie: 100
-Numar total de noduri calculate: 342
+Numar maxim de noduri existente la un moment dat in memorie: 99
+Numar total de noduri calculate: 338
 
 ----------------
