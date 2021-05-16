@@ -184,19 +184,22 @@ class Graph:  # graful problemei
                         if line[kk] == '.':
                             if i < lengthMatrix - 1:
                                 newline_down = nodCurent.info[i + 1][:]
-                            for ind_bila in range(kk, k - 1):
-                                newline[ind_bila] = '*'
-                                # daca nu cade mai mult de un nivel
-                                if i < lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.' and nodCurent.info[i + 2][ind_bila] != '.':
-                                    newline_down[ind_bila] = '*'
-                                    newline[ind_bila] = '.'
-                                    drop_ball = True
-                                # daca sunt pe penultimul nivel si poate sa cada pe ultimul nivel
-                                elif i == lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.':
-                                    newline[ind_bila] = '.'
-                                    drop_ball = True
-                                else:
-                                    valid_move = False
+                            ind_bila = kk
+                            newline[ind_bila] = '*'
+                            # daca nu cade mai mult de un nivel
+                            if i < lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.' and nodCurent.info[i + 2][ind_bila] != '.':
+                                newline_down[ind_bila] = '*'
+                                newline[ind_bila] = '.'
+                                drop_ball = True
+                            # daca nu cade
+                            elif i < lengthMatrix - 1 and nodCurent.info[i + 1][ind_bila] != '.':
+                                pass
+                            # daca sunt pe penultimul nivel si poate sa cada pe ultimul nivel
+                            elif i == lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.':
+                                newline[ind_bila] = '.'
+                                drop_ball = True
+                            else:
+                                valid_move = False
                             if i < lengthMatrix - 1:
                                 infoNodNou[i + 1] = newline_down[:]
                         else:
@@ -297,23 +300,26 @@ class Graph:  # graful problemei
                         if line[jj] == '.':
                             if i < lengthMatrix - 1:
                                 newline_down = nodCurent.info[i + 1][:]
-                            for ind_bila in range(j + 2, jj + 1):
-                                newline[ind_bila] = '*'
-                                # daca nu cade mai mult de un nivel
-                                if i < lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.' and \
-                                        nodCurent.info[i + 2][ind_bila] != '.':
-                                    newline_down[ind_bila] = '*'
-                                    newline[ind_bila] = '.'
-                                    drop_ball = True
-                                # daca sunt pe penultimul nivel si poate sa cada pe ultimul nivel
-                                elif i == lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.':
-                                    newline[ind_bila] = '.'
-                                    drop_ball = True
-                                else:
-                                    #print(newline)
-                                    #print(newline_down)
-                                    #print("\n")
-                                    valid_move = False
+                            ind_bila = jj
+                            newline[ind_bila] = '*'
+                            # daca nu cade mai mult de un nivel
+                            if i < lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.' and nodCurent.info[i + 2][ind_bila] != '.':
+                                newline_down[ind_bila] = '*'
+                                newline[ind_bila] = '.'
+                                drop_ball = True
+                            # daca nu cade
+                            elif i < lengthMatrix - 1 and nodCurent.info[i + 1][ind_bila] != '.':
+                                pass
+                            # daca sunt pe penultimul nivel si poate sa cada pe ultimul nivel
+                            elif i == lengthMatrix - 2 and nodCurent.info[i + 1][ind_bila] == '.':
+                                newline[ind_bila] = '.'
+                                drop_ball = True
+                            else:
+                                #print(newline)
+                                #print(newline_down)
+                                #print("\n")
+                                valid_move = False
+                                #print(newline)
                             if i < lengthMatrix - 1:
                                 infoNodNou[i + 1] = newline_down[:]
                         else:
@@ -520,7 +526,7 @@ def verify_matrix(matrix, length):
         # daca nu suntem pe ultima linie
         if poz != len(matrix) - 1:
             i = 0
-            while i < length-1:
+            while i < length:
                 # presupunem ca placa e in aer
                 floating = True
                 # cat timp nu am ajuns la capat, avem o secventa si nu suntem siguri ca nu e in aer
