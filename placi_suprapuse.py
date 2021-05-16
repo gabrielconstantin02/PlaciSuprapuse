@@ -350,11 +350,11 @@ class Graph:  # graful problemei
                     return 1  # minimul dintre costurile tuturor arcelor
             return 0
         elif tip_euristica == "euristica admisibila 1":
-            # calculez cate bile mai am in matrice
+            # calculez cate bile mai am in matrice care nu sunt suprapuse
             nr_balls = 0
-            for line in infoNod:
-                for x in line:
-                    if '*' == x:
+            for i in range(len(infoNod)):
+                for x in infoNod[i]:
+                    if '*' == x and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
                         nr_balls += 1
             return nr_balls
         elif tip_euristica == "euristica admisibila 2":
@@ -364,10 +364,10 @@ class Graph:  # graful problemei
             diff = 0
             for i in range(len(infoNod)):
                 for x in infoNod[i]:
-                    if '*' == x:
+                    if '*' == x and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
                         steps += len(infoNod) - 1 - i
                         diff += 1
-            return steps - diff if diff > 1 else steps
+            return steps - diff + 1 if diff > 1 else steps
         elif tip_euristica == "euristica neadmisibila":
             # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala
             # si ca sa ajunga in starea scop trebuie sa mut o astfel de piesa pe fiecare linie a matricei de la bila in jos + o mutare de cost 1 ca sa cada un nivel
@@ -427,7 +427,7 @@ def uniform_cost(gr, nrSolutiiCautate=1):
 def a_star(gr, nrSolutiiCautate, tip_euristica):
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
     if verify_matrix(gr.start, len(gr.start[0])):
-        c = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start))]
+        c = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
     else:
         g.write("Input invalid\n")
         return
@@ -465,7 +465,8 @@ def a_star_optimizat(gr, tip_euristica):
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
     if verify_matrix(gr.start, len(gr.start[0])):
         # l_open contine nodurile candidate pentru expandare
-        l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start))]
+        l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
+        print(gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
     else:
         g.write("Input invalid\n")
         return
@@ -568,8 +569,8 @@ for numeFisier in os.listdir(input_path):
     #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
 
     #a_star_optimizat(gr, tip_euristica="euristica banala")
-    a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
-    #a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
+    #a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
+    a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
     #a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
     g.close()
 

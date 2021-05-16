@@ -77,7 +77,7 @@ Cost ultima mutare: 1
 
 Lungime: 11
 Cost: 20
-Numar maxim de noduri existente la un moment dat in memorie: 17
-Numar total de noduri calculate: 53
+Numar maxim de noduri existente la un moment dat in memorie: 19
+Numar total de noduri calculate: 49
 
 ----------------
