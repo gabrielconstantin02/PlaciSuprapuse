@@ -531,7 +531,7 @@ def a_star_optimizat(gr, tip_euristica):
     if verify_matrix(gr.start, len(gr.start[0])):
         # l_open contine nodurile candidate pentru expandare
         l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
-        print(gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
+        # print(gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
     else:
         g.write("Input invalid\n")
         return
@@ -682,15 +682,15 @@ for numeFisier in os.listdir(input_path):
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
 
-    # a_star_optimizat(gr, tip_euristica="euristica banala")
+    a_star_optimizat(gr, tip_euristica="euristica banala")
     # a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
     # a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
     # a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
 
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    # TODO: vezi ca nu iti iese admisibile pe 4.txt Aparent se inampla doar pe ida_star for some reason ???
+    # TODO: vezi ca AMBELE nu iti ies admisibile pe 4.txt Aparent se inampla doar pe ida_star for some reason ???
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 

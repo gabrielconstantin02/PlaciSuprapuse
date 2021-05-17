@@ -3,7 +3,7 @@ aa*bb.
 .ddde.
 ..fffg
 ..jjii
-Cost ESTIMAT ultima mutare: 5
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 0
 
 2)
@@ -11,7 +11,7 @@ aa*.bb
 .ddde.
 ..fffg
 ..jjii
-Cost ESTIMAT ultima mutare: 5
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 3
 
 3)
@@ -19,7 +19,7 @@ aa*.bb
 ddd.e.
 ..fffg
 ..jjii
-Cost ESTIMAT ultima mutare: 3
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 4
 
 4)
@@ -27,7 +27,7 @@ Cost ultima mutare: 4
 ddd*e.
 ..fffg
 ..jjii
-Cost ESTIMAT ultima mutare: 4
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 1
 
 5)
@@ -35,7 +35,7 @@ Cost ultima mutare: 1
 ddd*.e
 ..fffg
 ..jjii
-Cost ESTIMAT ultima mutare: 3
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 2
 
 6)
@@ -43,7 +43,7 @@ Cost ultima mutare: 2
 ddd*.e
 .fff.g
 ..jjii
-Cost ESTIMAT ultima mutare: 2
+Cost ESTIMAT ultima mutare: 1
 Cost ultima mutare: 4
 
 7)
@@ -64,141 +64,7 @@ Cost ultima mutare: 1
 
 Lungime: 8
 Cost: 16
-Numar maxim de noduri existente la un moment dat in memorie: 104
-Numar total de noduri calculate: 1369
-1)
-aa*bb.
-.ddde.
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 5
-Cost ultima mutare: 0
+Numar maxim de noduri existente la un moment dat in memorie: 97
+Numar total de noduri calculate: 346
 
-2)
-aa*.bb
-.ddde.
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 5
-Cost ultima mutare: 3
-
-3)
-aa*.bb
-ddd.e.
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 3
-Cost ultima mutare: 4
-
-4)
-aa*.bb
-ddd..e
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 3
-Cost ultima mutare: 2
-
-5)
-.aa.bb
-ddd*.e
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 3
-Cost ultima mutare: 1
-
-6)
-.aa.bb
-ddd*.e
-.fff.g
-..jjii
-Cost ESTIMAT ultima mutare: 2
-Cost ultima mutare: 4
-
-7)
-.aa.bb
-ddd..e
-fff*.g
-..jjii
-Cost ESTIMAT ultima mutare: 1
-Cost ultima mutare: 1
-
-8)
-.aa.bb
-ddd..e
-fff..g
-.jj.ii
-Cost ESTIMAT ultima mutare: 0
-Cost ultima mutare: 1
-
-Lungime: 8
-Cost: 16
-Numar maxim de noduri existente la un moment dat in memorie: 171
-Numar total de noduri calculate: 1436
-1)
-aa*bb.
-.ddde.
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 5
-Cost ultima mutare: 0
-
-2)
-aa*.bb
-.ddde.
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 5
-Cost ultima mutare: 3
-
-3)
-aa*.bb
-ddd.e.
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 3
-Cost ultima mutare: 4
-
-4)
-aa*.bb
-ddd..e
-..fffg
-..jjii
-Cost ESTIMAT ultima mutare: 3
-Cost ultima mutare: 2
-
-5)
-aa*.bb
-ddd..e
-.fff.g
-..jjii
-Cost ESTIMAT ultima mutare: 3
-Cost ultima mutare: 4
-
-6)
-.aa.bb
-ddd*.e
-.fff.g
-..jjii
-Cost ESTIMAT ultima mutare: 2
-Cost ultima mutare: 1
-
-7)
-.aa.bb
-ddd..e
-fff*.g
-..jjii
-Cost ESTIMAT ultima mutare: 1
-Cost ultima mutare: 1
-
-8)
-.aa.bb
-ddd..e
-fff..g
-.jj.ii
-Cost ESTIMAT ultima mutare: 0
-Cost ultima mutare: 1
-
-Lungime: 8
-Cost: 16
-Numar maxim de noduri existente la un moment dat in memorie: 194
-Numar total de noduri calculate: 1459
+----------------
