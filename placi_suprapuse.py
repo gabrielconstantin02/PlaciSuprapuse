@@ -438,8 +438,6 @@ class Graph:  # graful problemei
         elif tip_euristica == "euristica neadmisibila":
             # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala
             # si ca sa ajunga in starea scop trebuie sa mut o astfel de piesa pe fiecare linie a matricei de la bila in jos + o mutare de cost 1 ca sa cada un nivel
-            # TODO: exista cumva contraexemplu? (poate pe matricile mici? (ca nr de linii/coloane), sau si pe altele?)
-            # TODO: eventual cauta una mai buna ca merge doar pe output_2 cu 10 nsol
             cost = 0
             for i in range(len(infoNod)):
                 for x in infoNod[i]:
@@ -584,6 +582,55 @@ def a_star_optimizat(gr, tip_euristica):
                 l_open.append(s)
 
 
+def ida_star(gr, nrSolutiiCautate, tip_euristica):
+    if verify_matrix(gr.start, len(gr.start[0])):
+        nodStart = NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
+    else:
+        g.write("Input invalid\n")
+        return
+    limita = nodStart.f
+    while True:
+
+        # print("Limita de pornire: ", limita)
+        nr_maxim_noduri = 1
+        nrSolutiiCautate, rez, nr_maxim_noduri = construieste_drum(gr, nodStart, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica)
+        if rez == "gata":
+            break
+        if rez == float('inf'):
+            g.write("Nu exista solutii!\n")
+            break
+        limita = rez
+        # print(">>> Limita noua: ", limita)
+        # input()
+
+
+def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica):
+    # print("A ajuns la: ", nodCurent)
+    if nodCurent.f > limita:
+        return nrSolutiiCautate, nodCurent.f, nr_maxim_noduri
+    if gr.testeaza_scop(nodCurent) and nodCurent.f == limita:
+        # print("Solutie: ")
+        nodCurent.afisDrum(g, nr_maxim_noduri)
+        # print(limita)
+        # print("\n----------------\n")
+        # input()
+        nrSolutiiCautate -= 1
+        if nrSolutiiCautate == 0:
+            return 0, "gata", nr_maxim_noduri
+    lSuccesori = gr.genereazaSuccesori(nodCurent, tip_euristica=tip_euristica)
+    nr_maxim_noduri += len(lSuccesori)
+    minim = float('inf')
+    for s in lSuccesori:
+        nrSolutiiCautate, rez, nr_maxim_noduri = construieste_drum(gr, s, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica)
+        if rez == "gata":
+            return 0, "gata", nr_maxim_noduri
+        # print("Compara ", rez, " cu ", minim)
+        if rez < minim:
+            minim = rez
+            # print("Noul minim: ", minim)
+    return nrSolutiiCautate, minim, nr_maxim_noduri
+
+
 def verify_matrix(matrix, length):
     if length == 0:
         return False
@@ -628,17 +675,23 @@ for numeFisier in os.listdir(input_path):
     print(numeFisier, "--->", numeFisierOutput)
     g = open(output_path + "/" + numeFisierOutput, "w")
     gr = Graph(input_path + "/" + numeFisier)
-    #uniform_cost(gr, nrSolutiiCautate=nsol)
+    # uniform_cost(gr, nrSolutiiCautate=nsol)
 
-    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
-    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    #a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
+    # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
+    # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
 
-    #a_star_optimizat(gr, tip_euristica="euristica banala")
-    #a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
-    a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
-    #a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
+    # a_star_optimizat(gr, tip_euristica="euristica banala")
+    # a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
+    # a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
+    # a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
+
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
+    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    # TODO: vezi ca nu iti iese admisibile pe 4.txt Aparent se inampla doar pe ida_star for some reason ???
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
