@@ -1,4 +1,4 @@
-aa*bb.cc
-.ddd..e*
-..ffffgg
-..jjii.k
+aa*bb.
+.ddd**
+..fffg
+..jjii

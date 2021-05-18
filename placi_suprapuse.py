@@ -11,11 +11,10 @@ timeout = float(sys.argv[4])
 t1 = time.time()
 
 
-# informatii despre un nod din arborele de parcurgere (nu din graful initial)
 class NodParcurgere:
     def __init__(self, info, parinte, cost=0, h=0):
         self.info = info
-        self.parinte = parinte  # parintele din arborele de parcurgere
+        self.parinte = parinte
         self.g = cost
         self.h = h
         self.f = self.g + self.h
@@ -31,7 +30,7 @@ class NodParcurgere:
         l_g.insert(0, 0)
         return l, l_g
 
-    def afisDrum(self, file, nr_maxim):  # returneaza si lungimea drumului
+    def afisDrum(self, file, nr_maxim):
         l, l_g = self.obtineDrum()
         for i in range(len(l)):
             file.write(str(i+1)+")\n")
@@ -69,7 +68,7 @@ class NodParcurgere:
         return sir
 
 
-class Graph:  # graful problemei
+class Graph:
     def __init__(self, nume_fisier):
         f = open(nume_fisier)
         line = f.readline()
@@ -87,15 +86,10 @@ class Graph:  # graful problemei
                 return False
         return True
 
-    # va genera succesorii sub forma de noduri in arborele de parcurgere
-
     def genereazaSuccesori(self, nodCurent, tip_euristica="euristica banala"):
         listaSuccesori = []
         lengthMatrix = len(nodCurent.info)
         for i in range(0, lengthMatrix):
-            # Cred ca poti sa o stergi ca pare ca strica lucruri
-            #if '*' not in nodCurent.info[i] and not(i > 0 and '*' in nodCurent.info[i - 1]) and not(i < lengthMatrix - 1 and '*' in nodCurent.info[i + 1]):
-                #continue
             length = len(nodCurent.info[i])
             line = nodCurent.info[i]
             j = 0
@@ -122,7 +116,6 @@ class Graph:  # graful problemei
                             q = i - 2
                             while q >= 0 and nodCurent.info[q][j] == '*':
                                 q -= 1
-                            # newline_up = nodCurent.info[i - 1][:]
                             # daca nu cade mai mult de un nivel
                             if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
                                 drop_ball = True
@@ -137,14 +130,9 @@ class Graph:  # graful problemei
                             else:
                                 valid_move = False
                         infoNodNou[i] = newline[:]
-                        # daca matricea obtinuta e valida
                         if valid_move:
-                            # print(infoNodNou)
                             valid_move = verify_matrix(infoNodNou, length)
-                            # print(line)
-                            # print(newline, valid_move)
                         if valid_move:
-                            # daca nu am mai ajuns la configuratia asta pana acum
                             if drop_ball:
                                 costArc = 1
                             else:
@@ -152,8 +140,6 @@ class Graph:  # graful problemei
                             if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
-                                # print(infoNodNou)
-                                # print_matrix(infoNodNou, g)
 
                     # daca la stanga avem cel putin o bila
                     if k > 1 and line[k - 1] == '*':
@@ -169,7 +155,6 @@ class Graph:  # graful problemei
                             q = i - 2
                             while q >= 0 and nodCurent.info[q][j] == '*':
                                 q -= 1
-                            # newline_up = nodCurent.info[i - 1][:]
                             # daca nu cade mai mult de un nivel
                             if i < lengthMatrix - 1 and nodCurent.info[i + 1][j] != '.':
                                 drop_ball = True
@@ -213,10 +198,7 @@ class Graph:  # graful problemei
                             valid_move = False
                         infoNodNou[i] = newline[:]
                         if valid_move:
-                            # print(infoNodNou)
                             valid_move = verify_matrix(infoNodNou, length)
-                            # print(line)
-                            # print(newline, valid_move)
                         if valid_move:
 
                             if drop_ball:
@@ -226,8 +208,6 @@ class Graph:  # graful problemei
                             if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
-                                # print(infoNodNou)
-                                # print_matrix(infoNodNou, g)
 
                     # daca la dreapta avem spatiu
                     if j < length - 1 and line[j + 1] == '.':
@@ -258,10 +238,7 @@ class Graph:  # graful problemei
                         infoNodNou[i] = newline[:]
                         # daca matricea obtinuta e valida
                         if valid_move:
-                            # print(infoNodNou)
                             valid_move = verify_matrix(infoNodNou, length)
-                            # print(line)
-                            # print(newline, valid_move)
                         if valid_move:
                             if drop_ball:
                                 costArc = 1
@@ -271,8 +248,6 @@ class Graph:  # graful problemei
                             if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
-                                # print(infoNodNou)
-                                # print_matrix(infoNodNou, g)
                     # daca la dreapta avem cel putin o bila
                     if j < length - 2 and line[j + 1] == '*':
                         infoNodNou = copy.deepcopy(nodCurent.info)
@@ -322,21 +297,14 @@ class Graph:  # graful problemei
                                 newline[ind_bila] = '.'
                                 drop_ball = True
                             else:
-                                #print(newline)
-                                #print(newline_down)
-                                #print("\n")
                                 valid_move = False
-                                #print(newline)
                             if i < lengthMatrix - 1:
                                 infoNodNou[i + 1] = newline_down[:]
                         else:
                             valid_move = False
                         infoNodNou[i] = newline[:]
                         if valid_move:
-                            # print(infoNodNou)
                             valid_move = verify_matrix(infoNodNou, length)
-                            # print(line)
-                            # print(newline, valid_move)
                         if valid_move:
                             if drop_ball:
                                 costArc = 1
@@ -345,8 +313,6 @@ class Graph:  # graful problemei
                             if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
-                                # print(infoNodNou)
-                                # print_matrix(infoNodNou, g)
                 j += 1
         return listaSuccesori
 
@@ -377,6 +343,16 @@ class Graph:  # graful problemei
                     if '*' == infoNod[i][j] and not(i < len(infoNod) - 1 and infoNod[i + 1][j] == '*'):
                         steps += len(infoNod) - 1 - i
                         diff += 1
+                        if diff > 1:
+                            st = j - 1
+                            dr = j + 1
+                            ok = True
+                            if i > 0 and st >= 0 and infoNod[i - 1][st] == '*':
+                                ok = False
+                            if i > 0 and dr < col and infoNod[i - 1][dr] == '*':
+                                ok = False
+                            if ok:
+                                steps -= 1
                         if i < lin - 1:
                             st = j
                             dr = j
@@ -410,7 +386,7 @@ class Graph:  # graful problemei
                                     cost_min = min(dr - j + 2, cost_min)
                                 steps += cost_min - 1
 
-            return steps - diff + 1 if diff > 1 else steps
+            return steps - diff + 1
         elif tip_euristica == "euristica neadmisibila":
             # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala
             # si ca sa ajunga in starea scop trebuie sa mut o astfel de piesa pe fiecare linie a matricei de la bila in jos + o mutare de cost 1 ca sa cada un nivel
@@ -429,14 +405,18 @@ class Graph:  # graful problemei
 
 
 def uniform_cost(gr, nrSolutiiCautate=1):
-    # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
+
     found_solution = False
     if verify_matrix(gr.start, len(gr.start[0])):
         c = [NodParcurgere(gr.start, None, 0)]
     else:
         g.write("Input invalid\n")
         return
-    # print("Coada: " + str(c))
+    if gr.testeaza_scop(c[0]):
+        g.write("Starea initiala este si finala!\n")
+        c[0].afisDrum(g, 1)
+        return
+
     nr_maxim_noduri = 1
     while len(c) > 0:
         t2 = time.time()
@@ -444,13 +424,11 @@ def uniform_cost(gr, nrSolutiiCautate=1):
         if milis > timeout:
             g.write("TIMEOUT REACHED!\n")
             return
-        # print("Coada actuala: " + str(c))
-        # input()
+
         if len(c) > nr_maxim_noduri:
             nr_maxim_noduri = len(c)
         nodCurent = c.pop(0)
-        # print_matrix(nodCurent.info, g)
-        # print(verify_matrix(nodCurent.info, len(nodCurent.info)))
+
         if gr.testeaza_scop(nodCurent):
             found_solution = True
             nodCurent.afisDrum(g, nr_maxim_noduri)
@@ -480,27 +458,29 @@ def uniform_cost(gr, nrSolutiiCautate=1):
 
 def a_star(gr, nrSolutiiCautate, tip_euristica):
     found_solution = False
-    # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
+
     if verify_matrix(gr.start, len(gr.start[0])):
         c = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
     else:
         g.write("Input invalid\n")
         return
-    # print("Coada: " + str(c))
+
     nr_maxim_noduri = 1
+    if gr.testeaza_scop(c[0]):
+        g.write("Starea initiala este si finala!\n")
+        c[0].afisDrum(g, 1)
+        return
     while len(c) > 0:
         t2 = time.time()
         milis = round(1000 * (t2 - t1))
         if milis > timeout:
             g.write("TIMEOUT REACHED!\n")
             return
-        # print("Coada actuala: " + str(c))
-        # input()
+
         if len(c) > nr_maxim_noduri:
             nr_maxim_noduri = len(c)
         nodCurent = c.pop(0)
-        # print_matrix(nodCurent.info, g)
-        # print(verify_matrix(nodCurent.info, len(nodCurent.info)))
+
         if gr.testeaza_scop(nodCurent):
             found_solution = True
             nodCurent.afisDrum(g, nr_maxim_noduri)
@@ -529,18 +509,14 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
 
 def a_star_optimizat(gr, tip_euristica):
     found_solution = False
-    # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
     if verify_matrix(gr.start, len(gr.start[0])):
-        # l_open contine nodurile candidate pentru expandare
         l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
-        # print(gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
     else:
         g.write("Input invalid\n")
         return
-    # print("Coada: " + str(c))
+
     nr_maxim_noduri = 1
 
-    # l_closed contine nodurile expandate
     l_closed = []
     while len(l_open) > 0:
         t2 = time.time()
@@ -563,7 +539,7 @@ def a_star_optimizat(gr, tip_euristica):
                     gasitC = True
                     if s.f >= nodC.f:
                         lSuccesori.remove(s)
-                    else:  # s.f<nodC.f
+                    else:
                         l_open.remove(nodC)
                     break
             if not gasitC:
@@ -571,14 +547,13 @@ def a_star_optimizat(gr, tip_euristica):
                     if s.info == nodC.info:
                         if s.f >= nodC.f:
                             lSuccesori.remove(s)
-                        else:  # s.f<nodC.f
+                        else:
                             l_closed.remove(nodC)
                         break
         for s in lSuccesori:
             i = 0
             gasit_loc = False
             for i in range(len(l_open)):
-                # daca f-urile sunt egale ordonez descrescator dupa g
                 if l_open[i].f > s.f or (l_open[i].f == s.f and l_open[i].g <= s.g):
                     gasit_loc = True
                     break
@@ -597,12 +572,15 @@ def a_star_optimizat(gr, tip_euristica):
 def ida_star(gr, nrSolutiiCautate, tip_euristica):
     if verify_matrix(gr.start, len(gr.start[0])):
         nodStart = NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
+        if gr.testeaza_scop(nodStart):
+            g.write("Starea initiala este si finala!\n")
+            nodStart.afisDrum(g, 1)
+            return
     else:
         g.write("Input invalid\n")
         return
     limita = nodStart.f
     while True:
-        # print("Limita de pornire: ", limita)
         nr_maxim_noduri = 1
         nrSolutiiCautate, rez, nr_maxim_noduri = construieste_drum(gr, nodStart, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica)
         if rez == "gata":
@@ -616,12 +594,9 @@ def ida_star(gr, nrSolutiiCautate, tip_euristica):
             g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
             break
         limita = rez
-        # print(">>> Limita noua: ", limita)
-        # input()
 
 
 def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica):
-    # print("A ajuns la: ", nodCurent)
     t2 = time.time()
     milis = round(1000 * (t2 - t1))
     if milis > timeout:
@@ -630,11 +605,7 @@ def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, 
     if nodCurent.f > limita:
         return nrSolutiiCautate, nodCurent.f, nr_maxim_noduri
     if gr.testeaza_scop(nodCurent) and nodCurent.f == limita:
-        # print("Solutie: ")
         nodCurent.afisDrum(g, nr_maxim_noduri)
-        # print(limita)
-        # print("\n----------------\n")
-        # input()
         nrSolutiiCautate -= 1
         if nrSolutiiCautate == 0:
             return 0, "gata", nr_maxim_noduri
@@ -645,10 +616,8 @@ def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, 
         nrSolutiiCautate, rez, nr_maxim_noduri = construieste_drum(gr, s, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica)
         if rez == "gata":
             return 0, "gata", nr_maxim_noduri
-        # print("Compara ", rez, " cu ", minim)
         if rez < minim:
             minim = rez
-            # print("Noul minim: ", minim)
     return nrSolutiiCautate, minim, nr_maxim_noduri
 
 
@@ -657,7 +626,6 @@ def verify_matrix(matrix, length):
         return False
     for (poz, line) in enumerate(matrix):
         if length != len(line):
-            # print(length, len(line))
             return False
         # daca nu suntem pe ultima linie
         if poz != len(matrix) - 1:
@@ -667,16 +635,13 @@ def verify_matrix(matrix, length):
                 floating = True
                 # cat timp nu am ajuns la capat, avem o secventa si nu suntem siguri ca nu e in aer
                 while i < length - 1 and line[i] == line[i + 1]:
-                    # print(line[i])
                     # daca sub ea nu e un gol continuu sau ea insasi e un gol
                     if matrix[poz + 1][i] != '.' or line[i] == '.':
                         floating = False
                     i += 1
-                # print(line[i])
                 if matrix[poz + 1][i] != '.' or line[i] == '.':
                     floating = False
                 if floating:
-                    # print(line)
                     return False
                 i += 1
     return True
@@ -709,12 +674,12 @@ for numeFisier in os.listdir(input_path):
 
     # a_star_optimizat(gr, tip_euristica="euristica banala")
     # a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
-    a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
+    # a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
     # a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
 
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
