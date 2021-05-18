@@ -1,11 +1,15 @@
 import copy
 import sys
 import os
+import time
 
 input_path = sys.argv[1]
 output_path = sys.argv[2]
 nsol = int(sys.argv[3])
 timeout = float(sys.argv[4])
+
+t1 = time.time()
+
 
 # informatii despre un nod din arborele de parcurgere (nu din graful initial)
 class NodParcurgere:
@@ -19,32 +23,31 @@ class NodParcurgere:
     def obtineDrum(self):
         l = [self]
         l_g = []
-        l_h = []
         nod = self
         while nod.parinte is not None:
             l.insert(0, nod.parinte)
             l_g.insert(0, nod.g - nod.parinte.g)
-            l_h.insert(0, nod.h)
             nod = nod.parinte
         l_g.insert(0, 0)
-        l_h.insert(0, nod.h)
-        return l, l_g, l_h
+        return l, l_g
 
     def afisDrum(self, file, nr_maxim):  # returneaza si lungimea drumului
-        l, l_g, l_h = self.obtineDrum()
+        l, l_g = self.obtineDrum()
         for i in range(len(l)):
             file.write(str(i+1)+")\n")
             file.write(str(l[i]))
-            file.write("Cost ESTIMAT ultima mutare: " + str(l_h[i]) + "\n")
             file.write("Cost ultima mutare: " + str(l_g[i]) + "\n\n")
         file.write("Lungime: " + str(len(l)) + "\n")
         file.write("Cost: " + str(self.g) + "\n")
-        # TODO: timp gasire solutie
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        file.write("Timp: " + str(milis) + " milisecunde\n")
         file.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim) + "\n")
         file.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
+        g.write("\n----------------\n")
         return len(l)
 
-    def contineInDrum(self, infoNodNou, costNodNou):
+    def contineInDrum(self, infoNodNou):
         nodDrum = self
         while nodDrum is not None:
             if infoNodNou == nodDrum.info:
@@ -146,7 +149,7 @@ class Graph:  # graful problemei
                                 costArc = 1
                             else:
                                 costArc = 1 + (j - k + 1)
-                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
+                            if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
@@ -220,7 +223,7 @@ class Graph:  # graful problemei
                                 costArc = 1
                             else:
                                 costArc = 2 * (1 + (j - k + 1))
-                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
+                            if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
@@ -265,7 +268,7 @@ class Graph:  # graful problemei
                             else:
                                 costArc = 1 + (j - k + 1)
                             # daca nu am mai ajuns la configuratia asta pana acum
-                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
+                            if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
@@ -339,7 +342,7 @@ class Graph:  # graful problemei
                                 costArc = 1
                             else:
                                 costArc = 2 * (1 + (j - k + 1))
-                            if not nodCurent.contineInDrum(infoNodNou, nodCurent.g + costArc):
+                            if not nodCurent.contineInDrum(infoNodNou):
                                 listaSuccesori.append(NodParcurgere(infoNodNou, nodCurent, nodCurent.g + costArc, self.calculeaza_h(infoNodNou, tip_euristica)))
                                 self.nr_succesori += 1
                                 # print(infoNodNou)
@@ -357,8 +360,8 @@ class Graph:  # graful problemei
             # calculez cate bile mai am in matrice care nu sunt suprapuse
             nr_balls = 0
             for i in range(len(infoNod)):
-                for x in infoNod[i]:
-                    if '*' == x and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
+                for j in range(len(infoNod[i])):
+                    if '*' == infoNod[i][j] and not(i < len(infoNod) - 1 and infoNod[i + 1][j] == '*'):
                         nr_balls += 1
             return nr_balls
         elif tip_euristica == "euristica admisibila 2":
@@ -371,27 +374,10 @@ class Graph:  # graful problemei
             for i in range(lin):
                 for j in range(col):
                     # e bila si sub ia nu sunt alte bile suprapuse
-                    if '*' == infoNod[i][j] and not(i < len(infoNod) - 1 and infoNod[i + 1] == '*'):
+                    if '*' == infoNod[i][j] and not(i < len(infoNod) - 1 and infoNod[i + 1][j] == '*'):
                         steps += len(infoNod) - 1 - i
                         diff += 1
                         if i < lin - 1:
-                            '''
-                            st = j - 1
-                            dr = j + 1
-                            # presupunem ca exista spatiu sa mutam una din placile de jos invecinate cu bila noastra
-                            ok = True
-                            while st > 0 and infoNod[i + 1][st - 1] == infoNod[i][st]:
-                                st -= 1
-                            if i > 0 and st > 0 and infoNod[i + 1][st - 1] == '.':
-                                ok = False
-                            while dr < col - 1 and infoNod[i + 1][dr + 1] == infoNod[i][dr]:
-                                dr += 1
-                            if i > 0 and dr < col - 1 and infoNod[i + 1][dr + 1] == '.':
-                                ok = False
-                            # daca placile nu pot fi mutate in laterala si avem o placa cu lungime pana la capete mai mare decat 1 in ambele directii de la bila
-                            if not ok and (j - 1 < 0 or infoNod[i + 1][j - 1] == infoNod[i + 1][j]) and (j + 1 >= col or infoNod[i + 1][j + 1] == infoNod[i + 1][j]):
-                                steps += 1
-                            '''
                             st = j
                             dr = j
                             ok = False
@@ -424,16 +410,6 @@ class Graph:  # graful problemei
                                     cost_min = min(dr - j + 2, cost_min)
                                 steps += cost_min - 1
 
-                        if diff > 1:
-                            st = j - 1
-                            dr = j + 1
-                            ok = True
-                            if i > 0 and st >= 0 and infoNod[i - 1][st] == '*':
-                                ok = False
-                            if i > 0 and dr < col and infoNod[i - 1][dr] == '*':
-                                ok = False
-                            if ok:
-                                diff -= 1
             return steps - diff + 1 if diff > 1 else steps
         elif tip_euristica == "euristica neadmisibila":
             # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala
@@ -454,6 +430,7 @@ class Graph:  # graful problemei
 
 def uniform_cost(gr, nrSolutiiCautate=1):
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
+    found_solution = False
     if verify_matrix(gr.start, len(gr.start[0])):
         c = [NodParcurgere(gr.start, None, 0)]
     else:
@@ -462,6 +439,11 @@ def uniform_cost(gr, nrSolutiiCautate=1):
     # print("Coada: " + str(c))
     nr_maxim_noduri = 1
     while len(c) > 0:
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        if milis > timeout:
+            g.write("TIMEOUT REACHED!\n")
+            return
         # print("Coada actuala: " + str(c))
         # input()
         if len(c) > nr_maxim_noduri:
@@ -470,8 +452,8 @@ def uniform_cost(gr, nrSolutiiCautate=1):
         # print_matrix(nodCurent.info, g)
         # print(verify_matrix(nodCurent.info, len(nodCurent.info)))
         if gr.testeaza_scop(nodCurent):
+            found_solution = True
             nodCurent.afisDrum(g, nr_maxim_noduri)
-            g.write("\n----------------\n")
             nrSolutiiCautate -= 1
             if nrSolutiiCautate == 0:
                 return
@@ -487,9 +469,17 @@ def uniform_cost(gr, nrSolutiiCautate=1):
                 c.insert(i, s)
             else:
                 c.append(s)
+    if not found_solution:
+        g.write('Nu exista solutie!\n')
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        g.write("Timp: " + str(milis) + " milisecunde\n")
+        g.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim_noduri) + "\n")
+        g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
 
 
 def a_star(gr, nrSolutiiCautate, tip_euristica):
+    found_solution = False
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
     if verify_matrix(gr.start, len(gr.start[0])):
         c = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
@@ -499,6 +489,11 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
     # print("Coada: " + str(c))
     nr_maxim_noduri = 1
     while len(c) > 0:
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        if milis > timeout:
+            g.write("TIMEOUT REACHED!\n")
+            return
         # print("Coada actuala: " + str(c))
         # input()
         if len(c) > nr_maxim_noduri:
@@ -507,8 +502,8 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
         # print_matrix(nodCurent.info, g)
         # print(verify_matrix(nodCurent.info, len(nodCurent.info)))
         if gr.testeaza_scop(nodCurent):
+            found_solution = True
             nodCurent.afisDrum(g, nr_maxim_noduri)
-            g.write("\n----------------\n")
             nrSolutiiCautate -= 1
             if nrSolutiiCautate == 0:
                 return
@@ -524,9 +519,16 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
                 c.insert(i, s)
             else:
                 c.append(s)
-
+    if not found_solution:
+        g.write('Nu exista solutie!\n')
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        g.write("Timp: " + str(milis) + " milisecunde\n")
+        g.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim_noduri) + "\n")
+        g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
 
 def a_star_optimizat(gr, tip_euristica):
+    found_solution = False
     # in coada vom avea doar noduri de tip NodParcurgere (nodurile din arborele de parcurgere)
     if verify_matrix(gr.start, len(gr.start[0])):
         # l_open contine nodurile candidate pentru expandare
@@ -541,13 +543,17 @@ def a_star_optimizat(gr, tip_euristica):
     # l_closed contine nodurile expandate
     l_closed = []
     while len(l_open) > 0:
-        if len(l_open) > nr_maxim_noduri:
-            nr_maxim_noduri = len(l_open)
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        if milis > timeout:
+            g.write("TIMEOUT REACHED!\n")
+            return
+        if len(l_open) + len(l_closed) > nr_maxim_noduri:
+            nr_maxim_noduri = len(l_open) + len(l_closed)
         nodCurent = l_open.pop(0)
         l_closed.append(nodCurent)
         if gr.testeaza_scop(nodCurent):
             nodCurent.afisDrum(g, nr_maxim_noduri)
-            g.write("\n----------------\n")
             return
         lSuccesori = gr.genereazaSuccesori(nodCurent, tip_euristica=tip_euristica)
         for s in lSuccesori:
@@ -580,7 +586,13 @@ def a_star_optimizat(gr, tip_euristica):
                 l_open.insert(i, s)
             else:
                 l_open.append(s)
-
+    if not found_solution:
+        g.write('Nu exista solutie!\n')
+        t2 = time.time()
+        milis = round(1000 * (t2 - t1))
+        g.write("Timp: " + str(milis) + " milisecunde\n")
+        g.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim_noduri) + "\n")
+        g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
 
 def ida_star(gr, nrSolutiiCautate, tip_euristica):
     if verify_matrix(gr.start, len(gr.start[0])):
@@ -590,14 +602,18 @@ def ida_star(gr, nrSolutiiCautate, tip_euristica):
         return
     limita = nodStart.f
     while True:
-
         # print("Limita de pornire: ", limita)
         nr_maxim_noduri = 1
         nrSolutiiCautate, rez, nr_maxim_noduri = construieste_drum(gr, nodStart, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica)
         if rez == "gata":
             break
         if rez == float('inf'):
-            g.write("Nu exista solutii!\n")
+            g.write('Nu exista solutie!\n')
+            t2 = time.time()
+            milis = round(1000 * (t2 - t1))
+            g.write("Timp: " + str(milis) + " milisecunde\n")
+            g.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim_noduri) + "\n")
+            g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
             break
         limita = rez
         # print(">>> Limita noua: ", limita)
@@ -606,6 +622,11 @@ def ida_star(gr, nrSolutiiCautate, tip_euristica):
 
 def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica):
     # print("A ajuns la: ", nodCurent)
+    t2 = time.time()
+    milis = round(1000 * (t2 - t1))
+    if milis > timeout:
+        g.write("TIMEOUT REACHED!\n")
+        return 0, "gata", 0
     if nodCurent.f > limita:
         return nrSolutiiCautate, nodCurent.f, nr_maxim_noduri
     if gr.testeaza_scop(nodCurent) and nodCurent.f == limita:
@@ -675,6 +696,10 @@ for numeFisier in os.listdir(input_path):
     print(numeFisier, "--->", numeFisierOutput)
     g = open(output_path + "/" + numeFisierOutput, "w")
     gr = Graph(input_path + "/" + numeFisier)
+    # daca avem deja bila pe ultima linie, o stergem automat
+    for i in range(len(gr.start[len(gr.start) - 1])):
+        if gr.start[len(gr.start) - 1][i] == '*':
+            gr.start[len(gr.start) - 1][i] = '.'
     # uniform_cost(gr, nrSolutiiCautate=nsol)
 
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
@@ -682,16 +707,15 @@ for numeFisier in os.listdir(input_path):
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
 
-    a_star_optimizat(gr, tip_euristica="euristica banala")
+    # a_star_optimizat(gr, tip_euristica="euristica banala")
     # a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
     # a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
     # a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
 
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    # TODO: vezi ca AMBELE nu iti ies admisibile pe 4.txt Aparent se inampla doar pe ida_star for some reason ???
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
