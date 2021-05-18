@@ -666,10 +666,10 @@ def verify_matrix(matrix, length):
                 # presupunem ca placa e in aer
                 floating = True
                 # cat timp nu am ajuns la capat, avem o secventa si nu suntem siguri ca nu e in aer
-                while i < length-1 and line[i] == line[i+1] and floating:
+                while i < length - 1 and line[i] == line[i + 1]:
                     # print(line[i])
                     # daca sub ea nu e un gol continuu sau ea insasi e un gol
-                    if matrix[poz+1][i] != '.' or line[i] == '.':
+                    if matrix[poz + 1][i] != '.' or line[i] == '.':
                         floating = False
                     i += 1
                 # print(line[i])
@@ -709,13 +709,13 @@ for numeFisier in os.listdir(input_path):
 
     # a_star_optimizat(gr, tip_euristica="euristica banala")
     # a_star_optimizat(gr, tip_euristica="euristica admisibila 1")
-    # a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
+    a_star_optimizat(gr, tip_euristica="euristica admisibila 2")
     # a_star_optimizat(gr, tip_euristica="euristica neadmisibila")
 
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
