@@ -120,7 +120,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 98 milisecunde
+Timp: 97 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 418
 Numar total de noduri calculate: 1424
 
@@ -247,7 +247,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 98 milisecunde
+Timp: 97 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 422
 Numar total de noduri calculate: 1428
 
@@ -374,7 +374,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 99 milisecunde
+Timp: 97 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 436
 Numar total de noduri calculate: 1442
 
@@ -501,7 +501,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 99 milisecunde
+Timp: 98 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 439
 Numar total de noduri calculate: 1445
 
@@ -628,7 +628,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 99 milisecunde
+Timp: 98 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 444
 Numar total de noduri calculate: 1450
 
@@ -749,7 +749,7 @@ Cost ultima mutare: 4
 
 Lungime: 19
 Cost: 54
-Timp: 100 milisecunde
+Timp: 99 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 462
 Numar total de noduri calculate: 1468
 
@@ -876,7 +876,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 101 milisecunde
+Timp: 100 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 480
 Numar total de noduri calculate: 1486
 
@@ -1003,7 +1003,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 101 milisecunde
+Timp: 100 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 485
 Numar total de noduri calculate: 1491
 
@@ -1130,7 +1130,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 101 milisecunde
+Timp: 100 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 491
 Numar total de noduri calculate: 1497
 
@@ -1257,7 +1257,7 @@ Cost ultima mutare: 3
 
 Lungime: 20
 Cost: 54
-Timp: 102 milisecunde
+Timp: 100 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 495
 Numar total de noduri calculate: 1501
 
