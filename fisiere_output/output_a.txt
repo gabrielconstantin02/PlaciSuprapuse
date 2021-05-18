@@ -1,4 +1,4 @@
 Nu exista solutie!
-Timp: 0 milisecunde
+Timp: 1 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 1
 Numar total de noduri calculate: 0

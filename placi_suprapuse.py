@@ -316,7 +316,7 @@ class Graph:
                 j += 1
         return listaSuccesori
 
-    def calculeaza_h(self, infoNod, tip_euristica="euristica banala"):
+    def calculeaza_h(self, infoNod, tip_euristica):
         if tip_euristica == "euristica banala":
             for line in infoNod:
                 if '*' in line:
@@ -394,7 +394,7 @@ class Graph:
             for i in range(len(infoNod)):
                 for x in infoNod[i]:
                     if '*' == x:
-                        cost += 2 * (1 + (len(infoNod[i]) - 2)) * (len(infoNod) - 1 - i) + len(infoNod) - 1 - i
+                        cost += len(infoNod) - 1 - i
             return cost
 
     def __repr__(self):
@@ -405,7 +405,13 @@ class Graph:
 
 
 def uniform_cost(gr, nrSolutiiCautate=1):
+    '''
+    Argumente:
+        gr (Graph): obiectul realizat de clasa Graph
+        nrSolutiiCautate (int): Numarul de solutii date ca argument in linie-comanda
 
+    Returneaza: -
+    '''
     found_solution = False
     if verify_matrix(gr.start, len(gr.start[0])):
         c = [NodParcurgere(gr.start, None, 0)]
@@ -457,6 +463,14 @@ def uniform_cost(gr, nrSolutiiCautate=1):
 
 
 def a_star(gr, nrSolutiiCautate, tip_euristica):
+    '''
+    Argumente:
+        gr (Graph): obiectul realizat de clasa Graph
+        nrSolutiiCautate (int): Numarul de solutii date ca argument in linie-comanda
+        tip_euristica (str): Tipul de euristica ce trebuie folosit in calcularea h-ului
+
+    Returneaza: -
+    '''
     found_solution = False
 
     if verify_matrix(gr.start, len(gr.start[0])):
@@ -507,7 +521,15 @@ def a_star(gr, nrSolutiiCautate, tip_euristica):
         g.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim_noduri) + "\n")
         g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
 
+
 def a_star_optimizat(gr, tip_euristica):
+    '''
+    Argumente:
+        gr (Graph): obiectul realizat de clasa Graph
+        tip_euristica (str): Tipul de euristica ce trebuie folosit in calcularea h-ului
+
+    Returneaza: -
+    '''
     found_solution = False
     if verify_matrix(gr.start, len(gr.start[0])):
         l_open = [NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))]
@@ -569,7 +591,16 @@ def a_star_optimizat(gr, tip_euristica):
         g.write("Numar maxim de noduri existente la un moment dat in memorie: " + str(nr_maxim_noduri) + "\n")
         g.write("Numar total de noduri calculate: " + str(gr.nr_succesori) + "\n")
 
+
 def ida_star(gr, nrSolutiiCautate, tip_euristica):
+    '''
+    Argumente:
+        gr (Graph): obiectul realizat de clasa Graph
+        nrSolutiiCautate (int): Numarul de solutii date ca argument in linie-comanda
+        tip_euristica (str): Tipul de euristica ce trebuie folosit in calcularea h-ului
+
+    Returneaza: -
+    '''
     if verify_matrix(gr.start, len(gr.start[0])):
         nodStart = NodParcurgere(gr.start, None, 0, gr.calculeaza_h(gr.start, tip_euristica=tip_euristica))
         if gr.testeaza_scop(nodStart):
@@ -597,6 +628,17 @@ def ida_star(gr, nrSolutiiCautate, tip_euristica):
 
 
 def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, tip_euristica):
+    '''
+    Argumente:
+        gr (Graph): obiectul realizat de clasa Graph
+        nodCurent (NodParcurgere): nodul curent (din graf) pe care il evaluam
+        limita (int): limita in functie de care stabilim daca continuam expandarea nodului
+        nrSolutiiCautate (int): Numarul de solutii date ca argument in linie-comanda
+        nr_maxim_noduri (int): Numarul maxim de noduri in memorie la un moment dat ce trebuie pasat spre afisare
+        tip_euristica (str): Tipul de euristica ce trebuie folosit in calcularea h-ului
+
+    Returneaza: -
+    '''
     t2 = time.time()
     milis = round(1000 * (t2 - t1))
     if milis > timeout:
@@ -622,6 +664,13 @@ def construieste_drum(gr, nodCurent, limita, nrSolutiiCautate, nr_maxim_noduri, 
 
 
 def verify_matrix(matrix, length):
+    '''
+    Argumente:
+        matrix (liste de liste de char-uri): Starea sub forma de matrice pe care trebuie sa o afiseze
+        length (int): Lungimea primei linii citite din fisierul de input pentru a verifica daca toate liniile din matrice au aceeasi lungime
+
+    Returneaza: True daca matricea respecta constrangerile de validare, altfel False
+    '''
     if length == 0:
         return False
     for (poz, line) in enumerate(matrix):
@@ -648,6 +697,13 @@ def verify_matrix(matrix, length):
 
 
 def print_matrix(matrix, file):
+    '''
+    Argumente:
+        matrix (liste de liste de char-uri): Starea sub forma de matrice pe care trebuie sa o afiseze
+        file (str): Fisierul de output unde trebuie facuta afisarea
+
+    Returneaza: -
+    '''
     line = ""
     for list in matrix:
         file.write(line.join(list) + '\n')
@@ -664,7 +720,12 @@ for numeFisier in os.listdir(input_path):
     # daca avem deja bila pe ultima linie, o stergem automat
     for i in range(len(gr.start[len(gr.start) - 1])):
         if gr.start[len(gr.start) - 1][i] == '*':
-            gr.start[len(gr.start) - 1][i] = '.'
+            line_ind = len(gr.start) - 1
+            while line_ind >= 0 and gr.start[line_ind][i] == '*':
+                gr.start[line_ind][i] = '.'
+                line_ind -= 1
+            print(gr.start)
+
     # uniform_cost(gr, nrSolutiiCautate=nsol)
 
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
@@ -679,8 +740,8 @@ for numeFisier in os.listdir(input_path):
 
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
