@@ -372,21 +372,20 @@ class Graph:
                                 ok = True
 
                             if not ok:
-                                cost_min = min(2 + dr - j, 2 + j - st)
+                                cost_min = min(1 + dr - j, 1 + j - st)
                                 st = j
                                 dr = j
                                 # presupunem ca nu exista spatiu sa mutam una din placile invecinate cu bila noastra
                                 while st > 0 and infoNod[i][st - 1] == infoNod[i][st]:
                                     st -= 1
                                 if i > 0 and st > 0 and infoNod[i][st - 1] == '.':
-                                    cost_min = min(cost_min, j - st + 2)
+                                    cost_min = min(cost_min, j - st + 1)
                                 while dr < col - 1 and infoNod[i][dr + 1] == infoNod[i][dr]:
                                     dr += 1
                                 if i > 0 and dr < col - 1 and infoNod[i][dr + 1] == '.':
-                                    cost_min = min(dr - j + 2, cost_min)
+                                    cost_min = min(dr - j + 1, cost_min)
                                 steps += cost_min - 1
-
-            return steps - diff + 1
+            return max(steps - diff, 0)
         elif tip_euristica == "euristica neadmisibila":
             # pentru fiecare bila din matrice, presupun ca am o piesa cat restul lungimii liniei - 2 (bila si un spatiu liber ca sa se mute) si adun costul mutarii ei presupunand ca o muta pe orizontala
             # si ca sa ajunga in starea scop trebuie sa mut o astfel de piesa pe fiecare linie a matricei de la bila in jos + o mutare de cost 1 ca sa cada un nivel
@@ -724,13 +723,12 @@ for numeFisier in os.listdir(input_path):
             while line_ind >= 0 and gr.start[line_ind][i] == '*':
                 gr.start[line_ind][i] = '.'
                 line_ind -= 1
-            print(gr.start)
 
     # uniform_cost(gr, nrSolutiiCautate=nsol)
 
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
 
     # a_star_optimizat(gr, tip_euristica="euristica banala")
@@ -741,7 +739,7 @@ for numeFisier in os.listdir(input_path):
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
