@@ -7,7 +7,7 @@ Cost ultima mutare: 0
 
 Lungime: 1
 Cost: 0
-Timp: 1 milisecunde
+Timp: 2 milisecunde
 Numar maxim de noduri existente la un moment dat in memorie: 1
 Numar total de noduri calculate: 0
 

@@ -537,7 +537,10 @@ def a_star_optimizat(gr, tip_euristica):
         return
 
     nr_maxim_noduri = 1
-
+    if gr.testeaza_scop(l_open[0]):
+        g.write("Starea initiala este si finala!\n")
+        l_open[0].afisDrum(g, 1)
+        return
     l_closed = []
     while len(l_open) > 0:
         t2 = time.time()
@@ -728,7 +731,7 @@ for numeFisier in os.listdir(input_path):
 
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
-    a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
+    # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
     # a_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
 
     # a_star_optimizat(gr, tip_euristica="euristica banala")
@@ -739,7 +742,7 @@ for numeFisier in os.listdir(input_path):
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica banala")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 1")
     # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica admisibila 2")
-    # ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
+    ida_star(gr, nrSolutiiCautate=nsol, tip_euristica="euristica neadmisibila")
     g.close()
 
 
